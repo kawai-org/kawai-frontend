@@ -62,7 +62,7 @@ export default function DashboardLayout() {
             `}>
                 <div className="h-16 flex items-center px-6 border-b border-border/40">
                     <img src={Logo} alt="Logo" className="w-8 h-8 mr-3" />
-                    <span className="font-bold text-xl tracking-tight text-primary font-heading">Kawai.</span>
+                    <span className="font-bold text-xl tracking-tight text-primary font-heading">Kawai-chan</span>
                     <button
                         onClick={() => setSidebarOpen(false)}
                         className="ml-auto md:hidden text-muted-foreground"

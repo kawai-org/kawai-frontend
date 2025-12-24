@@ -16,7 +16,7 @@ export default function FaqPage() {
         Swal.fire({
             icon: 'success',
             title: 'Feedback Sent!',
-            text: 'Thank you for helping us improve Kawai.',
+            text: 'Thank you for helping us improve Kawai-chan.',
             showConfirmButton: false,
             timer: 1500
         });
@@ -30,11 +30,11 @@ export default function FaqPage() {
         },
         {
             question: "Can I save links?",
-            answer: "Yes! If you save a note containing a URL, Kawai automatically detects it and marks it as a link. Check the 'Saved Links' page to see them organized."
+            answer: "Yes! If you save a note containing a URL, Kawai-chan automatically detects it and marks it as a link. Check the 'Saved Links' page to see them organized."
         },
         {
-            question: "Is Kawai connected to real AI?",
-            answer: "Kawai uses advanced AI simulations. The 'Chat with Gemini' feature connects to Google's Gemini API (if configured) to provide smart answers."
+            question: "Is Kawai-chan connected to real AI?",
+            answer: "Kawai-chan uses advanced AI simulations. The 'Chat with Gemini' feature connects to Google's Gemini API (if configured) to provide smart answers."
         },
         {
             question: "How do I create a reminder?",
@@ -47,7 +47,7 @@ export default function FaqPage() {
             <div className="text-center space-y-4">
                 <h1 className="text-3xl font-bold text-primary">Help Center</h1>
                 <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                    Find answers to common questions or send us your feedback to make Kawai even cuter and smarter!
+                    Find answers to common questions or send us your feedback to make Kawai-chan even cuter and smarter!
                 </p>
             </div>
 

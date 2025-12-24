@@ -84,7 +84,7 @@ export default function AuthPage() {
                     <div className="mx-auto w-24 h-24 mb-4 bg-white rounded-full p-2 shadow-sm flex items-center justify-center cursor-pointer" onClick={() => navigate("/")}>
                         <img src={Logo} alt="Kawai Logo" className="w-full h-full object-contain" />
                     </div>
-                    <CardTitle className="text-3xl font-bold text-primary tracking-tight">Kawai Assistant</CardTitle>
+                    <CardTitle className="text-3xl font-bold text-primary tracking-tight">Kawai-chan Assistant</CardTitle>
                     <CardDescription className="text-muted-foreground text-lg">
                         {isLogin ? "Welcome back!" : "Join us and get a cute assistant!"}
                     </CardDescription>
@@ -164,7 +164,7 @@ export default function AuthPage() {
 
                 </CardContent>
                 <CardFooter className="justify-center text-sm text-muted-foreground">
-                    Kawai v1.0 Beta Version
+                    Kawai-chan v1.0 Beta Version
                 </CardFooter>
             </Card>
         </div>

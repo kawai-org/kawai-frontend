@@ -26,7 +26,7 @@ export default function LandingPage() {
             <nav className="relative z-10 flex items-center justify-between px-6 py-4 md:px-12 backdrop-blur-sm bg-white/30 border-b border-white/20 sticky top-0">
                 <div className="flex items-center gap-3">
                     <img src={Logo} alt="Logo" className="w-10 h-10 object-contain drop-shadow-sm" />
-                    <span className="font-bold text-xl tracking-tight text-primary font-heading">Kawai Desu~</span>
+                    <span className="font-bold text-xl tracking-tight text-primary font-heading">Kawai-chan</span>
                 </div>
                 <div className="flex gap-4">
                     <Button
@@ -90,7 +90,7 @@ export default function LandingPage() {
                         <div className="col-span-2 md:col-span-1">
                             <div className="flex items-center gap-2 mb-4">
                                 <img src={Logo} alt="Logo" className="w-8 h-8" />
-                                <span className="font-bold text-xl text-primary font-heading">Kawai Desu~</span>
+                                <span className="font-bold text-xl text-primary font-heading">Kawai-chan</span>
                             </div>
                             <p className="text-sm text-muted-foreground leading-relaxed">
                                 Making your digital life cuter and smarter, one chat at a time.
