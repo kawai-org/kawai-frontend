@@ -58,7 +58,7 @@ export default function LandingPage() {
                             size="lg"
                             className="h-14 px-8 text-lg rounded-full bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all duration-300 group"
                         >
-                            Chat with Gemini <Zap className="ml-2 w-5 h-5 fill-yellow-400 text-yellow-500 group-hover:scale-110 transition-transform" />
+                            Chat with Kawai-chan <Zap className="ml-2 w-5 h-5 fill-yellow-400 text-yellow-500 group-hover:scale-110 transition-transform" />
                         </Button>
                     </div>
                 </div>
