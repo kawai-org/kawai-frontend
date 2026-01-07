@@ -26,19 +26,19 @@ export default function FaqPage() {
     const faqs = [
         {
             question: "How do I save a note?",
-            answer: "Simply type 'Simpan' followed by your note in the Chat Assistant. For example: 'Simpan Buy milk tomorrow'. You can also view it in the Notes tab."
+            answer: "Simply type 'Catat [Topic] [Content]' in WhatsApp or here. For example: 'Catat #kuliah ide skripsi'."
         },
         {
             question: "Can I save links?",
-            answer: "Yes! If you save a note containing a URL, Kawai-chan automatically detects it and marks it as a link. Check the 'Saved Links' page to see them organized."
-        },
-        {
-            question: "Is Kawai-chan connected to real AI?",
-            answer: "Kawai-chan uses advanced AI simulations. The 'Chat with Gemini' feature connects to Google's Gemini API (if configured) to provide smart answers."
+            answer: "Yes! Use the command 'Simpan Link [URL]'. For example: 'Simpan Link Zoom https://zoom.us'. It will appear in your Saved Links page."
         },
         {
             question: "How do I create a reminder?",
-            answer: "Currently, you can save notes with dates. In the future, typing 'Remind me to...' will automatically set a calendar alert!"
+            answer: "Type 'Ingatkan [Task] [Time]'. For example: 'Ingatkan Rapat Besok jam 10'."
+        },
+        {
+            question: "What are the other commands?",
+            answer: "You can type 'List' to see your data, 'Backup' to save to Google Drive, or 'Dashboard' to get the login link."
         }
     ];
 

@@ -1,17 +1,31 @@
-import { fetchAPI } from "./client";
+import client from "./client";
 
-export const registerUser = async (name, phoneNumber) => {
-    // Body harus match dengan struct User di backend (json tags)
-    // Backend: Phone string `json:"phone_number"` Name string `json:"name"`
-    return await fetchAPI("/api/signup", "POST", {
-        name,
-        phone_number: phoneNumber
-    });
+// Admin Login only. User login is handled via Magic Link (frontend directly).
+export const loginAdmin = async (username, password) => {
+    try {
+        const response = await client.post("/api/admin/login", {
+            username,
+            phone_number: username, // Send both to handle potential backend inconsistency
+            password
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Admin Login error:", error);
+        throw error;
+    }
 };
 
-export const loginUser = async (phoneNumber) => {
-    // Login di backend kita set pake phone number aja dulu sebagai kredensial
-    return await fetchAPI("/api/signin", "POST", {
-        phone_number: phoneNumber
-    });
+export const registerUser = async (userData) => {
+    try {
+        const response = await client.post("/api/register", userData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 };
+
+
+
+// "User Login" via phone input is DEPRECATED in favor of Magic Link.
+// However, we keep a stub or remove it. I will remove it to avoid confusion,
+// as the UI no longer uses it for real login.

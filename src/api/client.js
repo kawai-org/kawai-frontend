@@ -1,29 +1,25 @@
-export const API_BASE_URL = "https://kawai-be.vercel.app"; // Sesuaikan port backend Go kamu
+import axios from 'axios';
 
-export const fetchAPI = async (endpoint, method = "GET", body = null) => {
-    const headers = {
-        "Content-Type": "application/json",
-    };
-
-    const config = {
-        method,
-        headers,
-    };
-
-    if (body) {
-        config.body = JSON.stringify(body);
+const client = axios.create({
+    baseURL: "https://kawai-be.vercel.app",
+    timeout: 10000,
+    headers: {
+        'Content-Type': 'application/json'
     }
+});
 
-    try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-        const data = await response.json();
+client.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const activeToken = token || user.token;
 
-        if (!response.ok) {
-            throw new Error(data.Response || "Something went wrong");
+        if (activeToken) {
+            config.headers.Authorization = `Bearer ${activeToken}`;
         }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
-        return data;
-    } catch (error) {
-        throw error;
-    }
-};
+export default client;

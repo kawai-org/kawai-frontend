@@ -36,13 +36,22 @@ export default function DashboardLayout() {
         navigate("/");
     };
 
+    // Navigation items - ALL 6 items should be visible
     const navItems = [
         { path: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
         { path: "/chat", label: "Chat Assistant", icon: <MessageCircle size={20} /> },
         { path: "/notes", label: "My Notes", icon: <FileText size={20} /> },
         { path: "/links", label: "Saved Links", icon: <LinkIcon size={20} /> },
+        // IMPORTANT: Reminders and Calendar MUST be visible on desktop
+        { path: "/reminders", label: "Reminders", icon: <Bell size={20} /> },
         { path: "/calendar", label: "Calendar", icon: <CalendarIcon size={20} /> },
     ];
+
+    // Debug: Log navItems to console
+    console.log("DashboardLayout navItems:", navItems);
+    console.log("Total nav items:", navItems.length);
+    console.log("Reminders item:", navItems.find(item => item.path === "/reminders"));
+    console.log("Calendar item:", navItems.find(item => item.path === "/calendar"));
 
     return (
         <div className="min-h-screen bg-gray-50 flex font-sans text-foreground">
@@ -56,11 +65,11 @@ export default function DashboardLayout() {
 
             {/* Sidebar */}
             <aside className={`
-                fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-border/40 transition-transform duration-300 ease-in-out
+                fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-border/40 transition-transform duration-300 ease-in-out flex flex-col
                 md:relative md:translate-x-0
                 ${sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}
             `}>
-                <div className="h-16 flex items-center px-6 border-b border-border/40">
+                <div className="h-16 flex items-center px-6 border-b border-border/40 flex-shrink-0">
                     <img src={Logo} alt="Logo" className="w-8 h-8 mr-3" />
                     <span className="font-bold text-xl tracking-tight text-primary font-heading">Kawai-chan</span>
                     <button
@@ -71,7 +80,8 @@ export default function DashboardLayout() {
                     </button>
                 </div>
 
-                <div className="p-4 space-y-1">
+                {/* Navigation Items - Scrollable area */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-1">
                     {navItems.map((item) => {
                         const isActive = location.pathname === item.path;
                         return (
@@ -95,7 +105,8 @@ export default function DashboardLayout() {
                     })}
                 </div>
 
-                <div className="absolute bottom-4 left-0 w-full px-4 border-t border-border/40 pt-4 bg-white">
+                {/* Bottom section - Fixed at bottom */}
+                <div className="flex-shrink-0 w-full px-4 border-t border-border/40 pt-4 pb-4 bg-white">
                     <NavLink
                         to="/faq"
                         className={({ isActive }) => `

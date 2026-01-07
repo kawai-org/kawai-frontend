@@ -5,14 +5,17 @@ import ChatPage from './pages/ChatPage';
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import NotesPage from './pages/NotesPage';
+import RemindersPage from './pages/RemindersPage';
 import LinksPage from './pages/LinksPage';
 import CalendarPage from './pages/CalendarPage';
 import FaqPage from './pages/FaqPage';
 import NotFoundPage from './pages/NotFoundPage';
+import AdminDashboard from './pages/AdminDashboard';
+import TestDataPage from './pages/TestDataPage';
 import DashboardLayout from './layout/DashboardLayout';
 import PrivateRoute from './components/PrivateRoute';
-import MobileGuard from './components/MobileGuard';
 import LoadingScreen from './components/LoadingScreen';
+import MagicLinkPage from './pages/MagicLinkPage';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -26,7 +29,7 @@ function App() {
   }, []);
 
   return (
-    <MobileGuard>
+    <>
       {loading ? (
         <LoadingScreen />
       ) : (
@@ -34,13 +37,16 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/auth/magic" element={<MagicLinkPage />} />
 
             {/* Protected Dashboard Routes */}
             <Route element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/notes" element={<NotesPage />} />
               <Route path="/links" element={<LinksPage />} />
+              <Route path="/reminders" element={<RemindersPage />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/faq" element={<FaqPage />} />
             </Route>
@@ -50,7 +56,7 @@ function App() {
           </Routes>
         </Router>
       )}
-    </MobileGuard>
+    </>
   );
 }
 

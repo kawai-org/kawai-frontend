@@ -1,13 +1,17 @@
-import { fetchAPI } from "./client";
+import client from './client';
 
-export const getChatHistory = async (phoneNumber) => {
-    return await fetchAPI(`/api/history?phone=${phoneNumber}`, "GET");
+export const getChatHistory = async (phone) => {
+    const response = await client.get(`/api/chat/history?phone=${phone}`);
+    return response.data;
+};
+
+export const sendMessage = async (messageData) => {
+    const response = await client.post('/api/chat/send', messageData);
+    return response.data;
 };
 
 export const getDashboardData = async (phoneNumber) => {
-    return await fetchAPI(`/api/dashboard?phone=${phoneNumber}`, "GET");
-};
-
-export const sendMessage = async (phoneNumber, message) => {
-    return await fetchAPI("/api/chat", "POST", { phone: phoneNumber, message });
+    const response = await client.get(`/api/dashboard?phone=${phoneNumber}`);
+    // Robust unwrapping
+    return response.data?.data || response.data;
 };

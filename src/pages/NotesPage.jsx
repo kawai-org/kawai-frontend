@@ -1,30 +1,52 @@
 import { useEffect, useState } from "react";
-import { getDashboardData } from "@/api/chat";
+import { getNotes, updateNote, deleteNote, getNoteDetail } from "@/api/notes";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, Plus, Edit2, Trash2, CalendarIcon } from "lucide-react";
+import { Search, Plus, Edit2, Trash2, CalendarIcon, Eye } from "lucide-react";
 import { format } from "date-fns";
 import Swal from 'sweetalert2';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription
+} from "@/components/ui/dialog";
 
 export default function NotesPage() {
     const [notes, setNotes] = useState([]);
     const [search, setSearch] = useState("");
+    const [selectedNote, setSelectedNote] = useState(null);
+    const [viewOpen, setViewOpen] = useState(false);
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
     useEffect(() => {
         loadNotes();
-    }, []);
+    }, [search]);
 
     const loadNotes = async () => {
-        if (user.phone_number) {
+        if (user) {
             try {
-                const data = await getDashboardData(user.phone_number);
-                setNotes(data.notes || []);
+                // Pass search param if exists
+                const data = await getNotes(search);
+                // data might be array directly if backend returns array
+                setNotes(Array.isArray(data) ? data : data.notes || []);
             } catch (error) {
                 console.error("Failed to load notes", error);
             }
+        }
+    };
+
+    const handleView = async (note) => {
+        try {
+            setViewOpen(true);
+            setSelectedNote(note); // temporary show what we have
+            const detail = await getNoteDetail(note._id);
+            setSelectedNote(detail);
+        } catch (error) {
+            console.error("Failed to fetch detail", error);
         }
     };
 
@@ -37,17 +59,12 @@ export default function NotesPage() {
             confirmButtonText: 'Save',
             showLoaderOnConfirm: true,
             preConfirm: (newContent) => {
-                // Here we would call API to update note
-                // For now, mockup update locally
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve(newContent)
-                    }, 500)
-                })
+                return updateNote(note._id, newContent);
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire('Saved!', 'Your note has been updated (Mockup).', 'success');
+                Swal.fire('Saved!', 'Your note has been updated.', 'success');
+                loadNotes();
             }
         })
     };
@@ -62,8 +79,12 @@ export default function NotesPage() {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Call API delete here
-                Swal.fire('Deleted!', 'Your note has been deleted (Mockup).', 'success');
+                deleteNote(id).then(() => {
+                    Swal.fire('Deleted!', 'Your note has been deleted.', 'success');
+                    loadNotes();
+                }).catch(() => {
+                    Swal.fire('Error!', 'Failed to delete note.', 'error');
+                });
             }
         })
     };
@@ -77,19 +98,14 @@ export default function NotesPage() {
                     <h1 className="text-2xl font-bold">My Notes</h1>
                     <p className="text-muted-foreground">Manage your saved texts and ideas.</p>
                 </div>
-                <div className="flex gap-2 w-full md:w-auto">
-                    <div className="relative flex-1 md:w-64">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                        <Input
-                            placeholder="Search notes..."
-                            className="pl-9 bg-white"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                    </div>
-                    <Button className="shrink-0 gap-2">
-                        <Plus size={18} /> <span className="hidden sm:inline">Add Note</span>
-                    </Button>
+                <div className="relative w-full md:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                    <Input
+                        placeholder="Search notes..."
+                        className="pl-9 bg-white"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
                 </div>
             </div>
 
@@ -113,6 +129,9 @@ export default function NotesPage() {
                             </p>
                         </CardContent>
                         <CardFooter className="pt-0 flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-blue-500" onClick={() => handleView(note)}>
+                                <Eye size={16} />
+                            </Button>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={() => handleEdit(note)}>
                                 <Edit2 size={16} />
                             </Button>
@@ -130,6 +149,44 @@ export default function NotesPage() {
                     </div>
                 )}
             </div>
+            <Dialog open={viewOpen} onOpenChange={setViewOpen}>
+                <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-md">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl font-bold flex items-center gap-2">
+                            Note Details
+                            {selectedNote?.type && (
+                                <Badge variant="outline" className="ml-2 bg-blue-50 text-blue-600">
+                                    {selectedNote.type}
+                                </Badge>
+                            )}
+                        </DialogTitle>
+                        <DialogDescription>
+                            Created at {selectedNote?.created_at ? format(new Date(selectedNote.created_at), 'PPP pp') : 'N/A'}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-4 mt-4">
+                        <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 whitespace-pre-wrap leading-relaxed text-sm md:text-base text-foreground/80">
+                            {selectedNote?.content}
+                        </div>
+
+                        {selectedNote?.related_tags && selectedNote.related_tags.length > 0 && (
+                            <div className="space-y-2">
+                                <h4 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+                                    Related Tags
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {selectedNote.related_tags.map((tag, i) => (
+                                        <Badge key={i} variant="secondary" className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100">
+                                            #{tag.name || tag}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

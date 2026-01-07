@@ -15,6 +15,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format, isToday, isYesterday } from 'date-fns';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 
 
 import { getChatHistory, sendMessage } from "@/api/chat";
@@ -38,16 +45,10 @@ export default function ChatPage() {
                 try {
                     const history = await getChatHistory(user.phone_number);
                     if (Array.isArray(history)) {
-                        // Map backend logs to UI format
-                        // Backend: { from, message, received_at }
-                        // UI: { id, text, sender, timestamp }
                         const formatted = history.map(h => ({
                             id: h._id,
                             text: h.message,
-                            sender: h.from === user.phone_number ? "user" : "bot", // Logic assumes inbox (user sends) vs ? (bot replies not stored in same log yet)
-                            // Note: Backend currently only stores INBOX (MessageLog). 
-                            // Bot replies are sent strictly to WA, not stored in DB as 'log' yet in this simple model.
-                            // We will display User messages.
+                            sender: h.from === user.phone_number ? "user" : "bot",
                             timestamp: new Date(h.received_at)
                         }));
                         setMessages(prev => [...formatted, ...prev]);
@@ -135,6 +136,34 @@ export default function ChatPage() {
                     </Button>
                 </div>
                 <div className="overflow-y-auto h-[calc(100%-4rem)] p-3 space-y-4">
+                    {/* Bot Commands Cheatsheet */}
+                    <div className="mb-4">
+                        <Card className="bg-white/80 border-indigo-100 shadow-sm">
+                            <CardHeader className="p-3">
+                                <CardTitle className="text-xs font-bold text-indigo-600">Bot Commands (WhatsApp)</CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-3 pt-0 text-[10px] space-y-2 text-muted-foreground">
+                                <div>
+                                    <p className="font-semibold text-gray-700">1. Simpan Catatan</p>
+                                    <p>Catat [Hashtag] [Isi]</p>
+                                    <p className="italic text-gray-400">Ex: Catat #kuliah ide skripsi</p>
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-gray-700">2. Lihat Data</p>
+                                    <p>Ketik: List, Menu, atau List Link</p>
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-gray-700">3. Pengingat</p>
+                                    <p>Ex: Ingatkan Rapat Besok jam 10</p>
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-gray-700">4. Dashboard & Backup</p>
+                                    <p>Ketik: Dashboard / Backup</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
                     {Object.keys(groupedMessages).sort().reverse().map(date => (
                         <div key={date}>
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 px-2">

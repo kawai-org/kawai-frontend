@@ -1,21 +1,59 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Link as LinkIcon, MessageSquare, TrendingUp, Calendar } from "lucide-react";
-import { getDashboardData } from "@/api/chat";
+import { getNotes } from "@/api/notes";
+import { getReminders } from "@/api/reminders";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
+import AdminDashboard from "./AdminDashboard";
+
 export default function DashboardPage() {
-    const [stats, setStats] = useState({ notes: [], links: [] });
+    const [stats, setStats] = useState({ notes: [], links: [], reminders: [] });
     const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    // If Admin, render Admin Dashboard
+    if (user.role === 'admin') {
+        return <AdminDashboard />;
+    }
 
     useEffect(() => {
         const loadData = async () => {
             if (user.phone_number) {
                 try {
-                    const data = await getDashboardData(user.phone_number);
-                    setStats(data);
+                    console.log("Loading dashboard data...");
+                    const [notesData, remindersData] = await Promise.all([
+                        getNotes(),
+                        getReminders()
+                    ]);
+
+                    console.log("Dashboard - Notes Data:", notesData);
+                    console.log("Dashboard - Reminders Data:", remindersData);
+
+                    // Ensure arrays
+                    const notes = Array.isArray(notesData) ? notesData : [];
+                    const reminders = Array.isArray(remindersData) ? remindersData : [];
+
+                    // Filter "Links" from notes if they contain URLs
+                    const linksData = notes.filter(n =>
+                        n.type === 'mixed' ||
+                        (n.content && /(https?:\/\/[^\s]+)/g.test(n.content))
+                    );
+
+                    console.log("Dashboard - Filtered Links:", linksData);
+
+                    setStats({
+                        notes: notes,
+                        links: linksData,
+                        reminders: reminders
+                    });
                 } catch (error) {
                     console.error("Dashboard data error", error);
+                    // Set empty arrays on error
+                    setStats({
+                        notes: [],
+                        links: [],
+                        reminders: []
+                    });
                 }
             }
         };
@@ -64,7 +102,7 @@ export default function DashboardPage() {
                 />
                 <StatCard
                     title="Reminders"
-                    value="0"
+                    value={stats.reminders?.length || 0}
                     icon={<Calendar className="text-orange-500" size={24} />}
                     trend="You're all clear"
                 />
@@ -93,7 +131,7 @@ export default function DashboardPage() {
                                     cursor={{ fill: '#f4f4f5' }}
                                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                                 />
-                                <Bar dataKey="count" fill="var(--primary)" un-style={{ fill: 'oklch(var(--primary))' }} radius={[6, 6, 0, 0]} barSize={40} />
+                                <Bar dataKey="count" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} barSize={40} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -114,7 +152,7 @@ export default function DashboardPage() {
                                     <div className="overflow-hidden">
                                         <p className="text-sm font-medium truncate">{note.content}</p>
                                         <p className="text-xs text-muted-foreground mt-1 truncate">
-                                            {note.created_at ? new Date(note.created_at).toLocaleDateString() : "Just now"}
+                                            {note.created_at ? new Date(note.created_at.$date || note.created_at).toLocaleDateString() : "Just now"}
                                         </p>
                                     </div>
                                 </div>
