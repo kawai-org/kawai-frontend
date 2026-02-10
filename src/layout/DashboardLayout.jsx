@@ -11,7 +11,8 @@ import {
     Bell,
     HelpCircle,
     ChevronRight,
-    CircleDot
+    CircleDot,
+    UserCheck
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -110,13 +111,18 @@ export default function DashboardLayout() {
                 <div className="flex-shrink-0 w-full px-4 border-t border-slate-50 pt-6 pb-6 bg-white space-y-2">
                     <NavLink
                         to="/faq"
+                        onClick={() => setSidebarOpen(false)}
                         className={({ isActive }) => `
                             flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-300 group
                             ${isActive ? 'bg-primary/5 text-primary border border-primary/10' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}
                         `}
                     >
-                        <HelpCircle size={20} className={`${isActive ? 'text-primary' : 'text-slate-400 group-hover:text-primary'}`} />
-                        <span className="font-bold text-sm tracking-tight uppercase">Support Center</span>
+                        {({ isActive }) => (
+                            <>
+                                <HelpCircle size={20} className={`${isActive ? 'text-primary' : 'text-slate-400 group-hover:text-primary'}`} />
+                                <span className="font-bold text-sm tracking-tight uppercase">Support Center</span>
+                            </>
+                        )}
                     </NavLink>
 
                     <button

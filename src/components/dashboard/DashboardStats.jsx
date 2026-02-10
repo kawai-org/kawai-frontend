@@ -102,9 +102,9 @@ function StatCard({ title, value, icon, color, trend }) {
                     </div>
                 </div>
 
-                <div className="mt-8 space-y-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{title}</p>
-                    <h3 className="text-3xl font-black text-slate-900 tracking-tighter tabular-nums">{value}</h3>
+                <div className="mt-6 md:mt-8 space-y-1">
+                    <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{title}</p>
+                    <h3 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter tabular-nums">{value}</h3>
                 </div>
             </CardContent>
         </Card>

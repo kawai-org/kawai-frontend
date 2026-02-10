@@ -29,7 +29,7 @@ export default function DashboardActivity() {
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="px-6 pb-8 h-[360px]">
+            <CardContent className="px-4 md:px-6 pb-8 h-[300px] md:h-[360px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={activityData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#f1f5f9" />

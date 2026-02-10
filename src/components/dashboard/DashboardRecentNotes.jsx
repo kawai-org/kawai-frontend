@@ -64,10 +64,10 @@ export default function DashboardRecentNotes() {
                     ) : (
                         <>
                             {recentNotes.map((note, i) => (
-                                <div key={i} className="group flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 transition-all duration-300 border border-transparent hover:border-slate-100 cursor-pointer">
-                                    <div className="flex items-center gap-4 overflow-hidden">
-                                        <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                                            <FileText size={18} />
+                                <div key={i} className="group flex items-center justify-between p-3 md:p-4 rounded-xl md:rounded-2xl hover:bg-slate-50 transition-all duration-300 border border-transparent hover:border-slate-100 cursor-pointer">
+                                    <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
+                                        <div className="w-9 h-9 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/5 text-primary flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                            <FileText size={16} className="md:w-[18px] md:h-[18px]" />
                                         </div>
                                         <div className="overflow-hidden space-y-1">
                                             <p className="text-sm font-bold text-slate-900 truncate group-hover:text-primary transition-colors">
