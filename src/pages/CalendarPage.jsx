@@ -3,10 +3,9 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, FileText, Link as LinkIcon, Calendar as CalendarIcon, Users } from 'lucide-react';
+import { AlertCircle, Calendar as CalendarIcon, Users, Clock, Info, ShieldCheck } from 'lucide-react';
 import { getReminders } from "@/api/reminders";
-import { parseISO, isSameDay } from 'date-fns';
-import { format } from "date-fns";
+import { format, isSameDay } from "date-fns";
 
 export default function CalendarPage() {
     const [date, setDate] = useState(new Date());
@@ -18,32 +17,23 @@ export default function CalendarPage() {
         const loadEvents = async () => {
             if (user) {
                 try {
-                    console.log("Loading calendar events...");
-                    // Both admin and user use same endpoint - /api/dashboard/reminders
                     const data = await getReminders();
-
-                    console.log("Calendar - Raw Data:", data);
-
-                    // Ensure data is array
                     const dataArray = Array.isArray(data) ? data : (data.reminders || []);
 
-                    // Map reminders to calendar events
                     const mappedEvents = dataArray.map(r => {
-                        // Handle MongoDB date format
                         const scheduledTime = r.scheduled_time?.$date || r.scheduled_time;
                         const createdAt = r.created_at?.$date || r.created_at;
 
                         return {
                             date: new Date(scheduledTime || createdAt),
-                            title: r.title || "Untitled Event",
+                            title: r.title || "Untitled Activity",
                             type: 'schedule',
                             id: r._id || r.id,
-                            user_name: r.user_name || (isAdmin ? "User" : "Me"),
+                            user_name: r.user_name || (isAdmin ? "Anonymous User" : "My Record"),
                             status: r.status
                         };
                     });
 
-                    console.log("Calendar - Mapped Events:", mappedEvents);
                     setEvents(mappedEvents);
                 } catch (error) {
                     console.error("Failed to load calendar data", error);
@@ -59,86 +49,110 @@ export default function CalendarPage() {
     };
 
     return (
-        <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-bold">
-                    {isAdmin ? "Admin Calendar Control" : "Activity Calendar"}
-                </h1>
-                <p className="text-muted-foreground">
-                    {isAdmin
-                        ? "Overview of all scheduled user meetings and events."
-                        : "Track your notes, links, and scheduled activities."
-                    }
-                </p>
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-1">
+                    <h2 className="text-3xl font-black tracking-tighter text-slate-900 uppercase font-heading flex items-center gap-3">
+                        Cloud <span className="text-gradient">Calendar</span>
+                    </h2>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                        {isAdmin ? "Administrative Control & Oversight" : "Personal Timeline & History"}
+                    </p>
+                </div>
+
+                {isAdmin && (
+                    <Badge className="bg-red-50 text-red-600 border-red-100 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                        <ShieldCheck size={14} /> Admin Privileges Active
+                    </Badge>
+                )}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <Card className="lg:col-span-2 border-border/40 shadow-sm h-fit">
-                    <CardContent className="p-6">
-                        <div className="calendar-wrapper">
-                            <Calendar
-                                onChange={setDate}
-                                value={date}
-                                tileContent={({ date, view }) => {
-                                    if (view === 'month') {
-                                        const dayEvents = getEventsForDate(date);
-                                        if (dayEvents.length > 0) {
-                                            return (
-                                                <div className="flex justify-center mt-1 gap-1 flex-wrap max-w-[2rem] mx-auto">
-                                                    {dayEvents.slice(0, 3).map((ev, i) => (
-                                                        <div
-                                                            key={i}
-                                                            className={`w-1.5 h-1.5 rounded-full ${isAdmin ? 'bg-red-500' : 'bg-purple-500'}`}
-                                                        />
-                                                    ))}
-                                                    {dayEvents.length > 3 && <span className="text-[6px] leading-none text-gray-400">+</span>}
-                                                </div>
-                                            )
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                {/* Calendar Pane */}
+                <div className="lg:col-span-8">
+                    <Card className="border-0 shadow-2xl shadow-slate-200/50 rounded-[2.5rem] overflow-hidden bg-white h-full">
+                        <CardContent className="p-8 md:p-10">
+                            <div className="calendar-container">
+                                <Calendar
+                                    onChange={setDate}
+                                    value={date}
+                                    tileContent={({ date, view }) => {
+                                        if (view === 'month') {
+                                            const dayEvents = getEventsForDate(date);
+                                            if (dayEvents.length > 0) {
+                                                return (
+                                                    <div className="flex justify-center mt-2 gap-1">
+                                                        {dayEvents.slice(0, 3).map((_, i) => (
+                                                            <div
+                                                                key={i}
+                                                                className={`w-1.5 h-1.5 rounded-full ${isAdmin ? 'bg-red-400 ring-2 ring-red-100' : 'bg-primary ring-2 ring-primary/20'}`}
+                                                            />
+                                                        ))}
+                                                        {dayEvents.length > 3 && (
+                                                            <span className="text-[8px] font-black text-slate-300">+{dayEvents.length - 3}</span>
+                                                        )}
+                                                    </div>
+                                                )
+                                            }
                                         }
-                                    }
-                                }}
-                                className="w-full border-none font-sans"
-                            />
-                        </div>
-                        <div className="mt-6 flex gap-4 justify-center text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                                <div className={`w-2 h-2 rounded-full ${isAdmin ? 'bg-red-500' : 'bg-purple-500'}`}></div>
-                                {isAdmin ? "User Meeting" : "Schedule/Event"}
+                                    }}
+                                    className="modern-calendar"
+                                    prev2Label={null}
+                                    next2Label={null}
+                                />
                             </div>
-                        </div>
-                    </CardContent>
-                </Card>
 
-                <div className="space-y-6">
-                    <Card className="h-full border-border/40">
-                        <CardHeader>
-                            <CardTitle className="text-lg flex items-center gap-2">
-                                <CalendarIcon size={18} />
-                                Activity on {format(date, 'MMM dd, yyyy')}
+                            <div className="mt-10 pt-8 border-t border-slate-50 flex flex-wrap gap-6 justify-center">
+                                <LegendItem color={isAdmin ? "bg-red-400" : "bg-primary"} label={isAdmin ? "User Events" : "Cloud Records"} />
+                                <LegendItem color="bg-slate-200" label="Current Day" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Event Sidebar */}
+                <div className="lg:col-span-4 h-full">
+                    <Card className="border-0 shadow-2xl shadow-slate-200/50 rounded-[2.5rem] bg-slate-900 overflow-hidden h-full min-h-[500px]">
+                        <CardHeader className="p-8 pb-4">
+                            <CardTitle className="text-white text-lg font-black uppercase tracking-tight font-heading flex items-center gap-3">
+                                <Clock className="text-primary" size={20} />
+                                {format(date, 'MMM dd, yyyy')}
                             </CardTitle>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-1">
+                                {getEventsForDate(date).length} Activities Detected
+                            </p>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-8 pt-0">
                             <div className="space-y-4">
                                 {getEventsForDate(date).map((ev, i) => (
-                                    <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100 animate-in fade-in slide-in-from-right-2" style={{ animationDelay: `${i * 100}ms` }}>
-                                        <div className={`mt-1 bg-white p-1.5 rounded-lg shadow-sm ${isAdmin ? 'text-red-500' : 'text-purple-500'}`}>
-                                            {isAdmin ? <Users size={14} /> : <CalendarIcon size={14} />}
-                                        </div>
-                                        <div className="overflow-hidden">
-                                            <p className="font-medium text-sm truncate w-full">{ev.title}</p>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <Badge variant="secondary" className={`text-[10px] h-5 px-1.5 capitalize ${isAdmin ? 'bg-red-100 text-red-700' : 'bg-purple-100 text-purple-700'}`}>
-                                                    {ev.user_name}
-                                                </Badge>
-                                                <span className="text-[10px] text-muted-foreground">{format(ev.date, 'HH:mm')}</span>
+                                    <div key={i} className="group relative bg-white/5 border border-white/10 p-5 rounded-[1.5rem] hover:bg-white/10 transition-all duration-300 animate-in fade-in slide-in-from-right-4" style={{ animationDelay: `${i * 100}ms` }}>
+                                        <div className="flex flex-col gap-3">
+                                            <Badge className={`w-fit text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border-0 ${isAdmin ? 'bg-red-500/20 text-red-400' : 'bg-primary/20 text-primary-foreground'}`}>
+                                                {ev.user_name}
+                                            </Badge>
+                                            <h4 className="text-white font-bold text-sm leading-tight line-clamp-2">
+                                                {ev.title}
+                                            </h4>
+                                            <div className="flex items-center gap-2 text-slate-500">
+                                                <Clock size={12} className="stroke-[2.5]" />
+                                                <span className="text-[10px] font-black uppercase tracking-[0.1em]">
+                                                    {format(ev.date, 'HH:mm')} • {ev.type}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
                                 ))}
+
                                 {getEventsForDate(date).length === 0 && (
-                                    <div className="text-center py-12 text-muted-foreground text-sm flex flex-col items-center">
-                                        <AlertCircle className="w-10 h-10 mb-3 opacity-20" />
-                                        No activity recorded for this day.
+                                    <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+                                        <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
+                                            <AlertCircle className="text-slate-700" size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-600">Timeline Empty</p>
+                                            <p className="text-slate-500 text-[10px] font-medium mt-1">No recorded activities for this date.</p>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -148,31 +162,91 @@ export default function CalendarPage() {
             </div>
 
             <style>{`
-                .react-calendar { 
-                    width: 100%; 
-                    background: white; 
-                    border: none; 
-                    font-family: inherit;
+                .modern-calendar {
+                    width: 100% !important;
+                    border: none !important;
+                    font-family: inherit !important;
+                }
+                .react-calendar__navigation {
+                    margin-bottom: 2rem !important;
+                    height: 50px !important;
+                }
+                .react-calendar__navigation button {
+                    font-family: 'Outfit', sans-serif !important;
+                    font-weight: 900 !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 0.1em !important;
+                    font-size: 14px !important;
+                    border-radius: 1rem !important;
+                    color: #0f172a !important;
+                }
+                .react-calendar__navigation button:hover {
+                    background-color: #f8fafc !important;
+                }
+                .react-calendar__month-view__weekdays {
+                    font-weight: 900 !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 0.15em !important;
+                    font-size: 10px !important;
+                    color: #94a3b8 !important;
+                    margin-bottom: 1rem !important;
+                }
+                .react-calendar__month-view__weekdays__weekday abbr {
+                    text-decoration: none !important;
                 }
                 .react-calendar__tile {
-                    padding: 1.5em 0.5em;
-                    height: 100px;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: flex-start;
+                    height: 120px !important;
+                    padding: 1rem !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: center !important;
+                    justify-content: flex-start !important;
+                    border-radius: 1.5rem !important;
+                    transition: all 0.2s ease !important;
+                    font-weight: 600 !important;
+                    color: #475569 !important;
+                    border: 2px solid transparent !important;
                 }
-                .react-calendar__tile--active {
-                    background: #fdf2f8 !important;
-                    color: var(--primary) !important;
-                    border: 2px solid var(--primary);
-                    border-radius: 12px;
+                .react-calendar__tile:hover {
+                    background-color: #f8fafc !important;
+                    transform: scale(0.98);
                 }
                 .react-calendar__tile--now {
-                    background: #f3f4f6;
-                    border-radius: 12px;
+                    background-color: #f1f5f9 !important;
+                    font-weight: 900 !important;
+                    color: #0f172a !important;
+                }
+                .react-calendar__tile--active {
+                    background-color: white !important;
+                    border-color: ${isAdmin ? '#f87171' : 'hsl(var(--primary))'} !important;
+                    color: ${isAdmin ? '#ef4444' : 'hsl(var(--primary))'} !important;
+                    box-shadow: 0 10px 20px -10px ${isAdmin ? 'rgba(239,68,68,0.3)' : 'rgba(var(--primary-rgb),0.3)'} !important;
+                }
+                .react-calendar__tile--active:enabled:focus, 
+                .react-calendar__tile--active:enabled:hover {
+                    background-color: white !important;
+                }
+                .react-calendar__month-view__days__day--neighboringMonth {
+                    color: #e2e8f0 !important;
+                }
+                
+                @media (max-width: 768px) {
+                    .react-calendar__tile {
+                        height: 80px !important;
+                        padding: 0.5rem !important;
+                    }
                 }
             `}</style>
         </div>
     );
 }
+
+function LegendItem({ color, label }) {
+    return (
+        <div className="flex items-center gap-2">
+            <div className={`w-2.5 h-2.5 rounded-full ${color}`}></div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</span>
+        </div>
+    );
+}
+

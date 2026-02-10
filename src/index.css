@@ -82,5 +82,35 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
+  }
+  
+  .glass-dark {
+    @apply bg-black/20 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+
+  .mesh-gradient {
+    background-color: hsla(330, 80%, 70%, 1);
+    background-image:
+      radial-gradient(at 0% 0%, hsla(330, 80%, 70%, 1) 0px, transparent 50%),
+      radial-gradient(at 50% 0%, hsla(280, 80%, 70%, 1) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(180, 60%, 80%, 1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(330, 80%, 80%, 1) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, hsla(300, 80%, 70%, 1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(330, 80%, 60%, 1) 0px, transparent 50%);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-indigo-500;
   }
 }

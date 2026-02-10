@@ -10,11 +10,9 @@ import {
     Smartphone,
     Zap,
     Send,
-    Users,
-    Clock,
     Shield,
     Star,
-    ChevronRight,
+    ArrowRight,
     CheckCircle2
 } from 'lucide-react';
 
@@ -31,217 +29,304 @@ export default function LandingPage() {
         }
     };
 
+    const waLink = `https://wa.me/${import.meta.env.VITE_BOT_NUMBER}?text=Halo%20Kawai-chan!`;
+
     return (
-        <div className="min-h-screen bg-background relative overflow-hidden font-sans text-foreground">
-            {/* Background blobs */}
-            <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute top-[40%] right-[20%] w-[300px] h-[300px] bg-purple-400/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="min-h-screen bg-background relative selection:bg-primary/30 selection:text-primary-foreground font-sans">
+            {/* Mesh Background Decorations */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse" />
+                <div className="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px]" />
+                <div className="absolute top-[20%] right-[10%] w-[300px] h-[300px] bg-blue-400/10 rounded-full blur-[100px]" />
+            </div>
 
             {/* Navbar */}
-            <nav className="relative z-20 flex items-center justify-between px-6 py-4 md:px-12 backdrop-blur-sm bg-white/30 border-b border-white/20 sticky top-0">
-                <div className="flex items-center gap-3">
-                    <img src={Logo} alt="Logo" className="w-10 h-10 object-contain drop-shadow-sm" />
-                    <span className="font-bold text-xl tracking-tight text-primary font-heading">Kawai-chan</span>
-                </div>
-                <div className="flex gap-4">
-                    <LoginModal open={loginOpen} onOpenChange={setLoginOpen}>
+            <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 md:px-12 backdrop-blur-xl bg-white/40 border-b border-white/20 shadow-sm transition-all duration-300">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-white rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center p-1.5 border border-primary/10">
+                            <img src={Logo} alt="Logo" className="w-full h-full object-contain" />
+                        </div>
+                        <span className="font-bold text-2xl tracking-tight text-gradient font-heading">Kawai-chan</span>
+                    </div>
+
+                    <div className="hidden md:flex items-center gap-8">
+                        <a href="#features" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Features</a>
+                        <a href="#how-it-works" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">How it Works</a>
+                        <a href="#testimonials" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Testimonials</a>
+                    </div>
+
+                    <div className="flex gap-4">
+                        <LoginModal open={loginOpen} onOpenChange={setLoginOpen}>
+                            <Button variant="ghost" className="font-semibold text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full px-6">
+                                Sign In
+                            </Button>
+                        </LoginModal>
                         <Button
-                            variant="ghost"
-                            className="text-primary hover:bg-primary/10 font-medium"
+                            onClick={handleStart}
+                            className="bg-primary hover:bg-primary/90 text-white font-bold rounded-full px-6 shadow-lg shadow-primary/20 transition-transform active:scale-95"
                         >
-                            Sign In
+                            Get Started
                         </Button>
-                    </LoginModal>
+                    </div>
                 </div>
             </nav>
 
-            {/* Hero Section */}
-            <section className="relative z-10 container mx-auto px-6 pt-16 pb-20 md:pt-24 md:pb-32 text-center">
-                <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-                    <span className="inline-block py-1 px-3 rounded-full bg-secondary/50 text-secondary-foreground text-xs font-semibold mb-6 border border-secondary shadow-sm">
-                        ✨ Your Personal AI Companion
-                    </span>
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 font-heading">
-                        Chat. Organize. <br className="hidden md:block" /> Simply Your Life.
-                    </h1>
-                    <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-                        Kawai is not just a chatbot. It's your smart friend that helps you save notes, manage links, and integrate with advanced AI tools.
-                    </p>
+            <main className="relative z-10">
+                {/* Hero Section */}
+                <section className="container mx-auto px-6 pt-32 pb-20 md:pt-48 md:pb-40 text-center">
+                    <div className="max-w-4xl mx-auto space-y-8">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                            </span>
+                            Your Smart WA Companion
+                        </div>
 
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <Button
-                            onClick={handleStart}
-                            size="lg"
-                            className="h-14 px-8 text-lg rounded-full bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all duration-300 group"
-                        >
-                            Chat with Kawai-chan <Zap className="ml-2 w-5 h-5 fill-yellow-400 text-yellow-500 group-hover:scale-110 transition-transform" />
-                        </Button>
-                    </div>
-                </div>
-            </section>
+                        <h1 className="text-5xl md:text-8xl font-black leading-[1.1] tracking-tight text-slate-900 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+                            Organize Everything <br />
+                            <span className="text-gradient">Through WhatsApp</span>
+                        </h1>
 
-            {/* Features Section */}
-            <section className="relative z-10 bg-white/50 backdrop-blur-sm py-16 md:py-24">
-                <div className="container mx-auto px-6">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">Powerful Features</h2>
-                        <p className="text-muted-foreground max-w-xl mx-auto">Everything you need to organize your digital life in one place</p>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-                        <FeatureCard
-                            icon={<MessageCircle className="w-7 h-7 text-primary" />}
-                            title="Instant Conversations"
-                            desc="Experience seamless and natural conversations powered by AI."
-                        />
-                        <FeatureCard
-                            icon={<Save className="w-7 h-7 text-green-500" />}
-                            title="Smart Memory"
-                            desc="Save important notes and ideas just by asking Kawai."
-                        />
-                        <FeatureCard
-                            icon={<Send className="w-7 h-7 text-blue-500" />}
-                            title="WhatsApp Integration"
-                            desc="Connect via WhatsApp for on-the-go assistance."
-                        />
-                        <FeatureCard
-                            icon={<Shield className="w-7 h-7 text-purple-500" />}
-                            title="Secure & Private"
-                            desc="Your data is encrypted and safe with us."
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* How It Works Section */}
-            <section className="relative z-10 py-16 md:py-24">
-                <div className="container mx-auto px-6">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">How It Works</h2>
-                        <p className="text-muted-foreground max-w-xl mx-auto">Get started in just 3 simple steps</p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                        <StepCard
-                            step={1}
-                            icon={<Smartphone className="w-8 h-8" />}
-                            title="Connect via WhatsApp"
-                            desc="Simply click the login button and connect with our WhatsApp bot."
-                        />
-                        <StepCard
-                            step={2}
-                            icon={<MessageCircle className="w-8 h-8" />}
-                            title="Chat with Kawai"
-                            desc="Ask anything, save notes, or manage your links through chat."
-                        />
-                        <StepCard
-                            step={3}
-                            icon={<CheckCircle2 className="w-8 h-8" />}
-                            title="Access Anywhere"
-                            desc="Access your saved data from any device, anytime."
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* Statistics Section */}
-            <section className="relative z-10 bg-gradient-to-r from-primary to-purple-600 py-16 md:py-20">
-                <div className="container mx-auto px-6">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
-                        <StatCard number="10,000+" label="Active Users" />
-                        <StatCard number="50,000+" label="Messages Sent" />
-                        <StatCard number="99%" label="Happy Users" />
-                        <StatCard number="24/7" label="Available" />
-                    </div>
-                </div>
-            </section>
-
-            {/* Testimonials Section */}
-            <section className="relative z-10 py-16 md:py-24 bg-white/50 backdrop-blur-sm">
-                <div className="container mx-auto px-6">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">What Our Users Say</h2>
-                        <p className="text-muted-foreground max-w-xl mx-auto">Real stories from real people who love Kawai</p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                        <TestimonialCard
-                            quote="Kawai has completely changed how I organize my daily tasks. It's like having a personal assistant in my pocket!"
-                            name="Sarah M."
-                            role="Entrepreneur"
-                        />
-                        <TestimonialCard
-                            quote="The WhatsApp integration is genius. I can save notes and reminders without leaving my chat app."
-                            name="Budi S."
-                            role="University Student"
-                        />
-                        <TestimonialCard
-                            quote="Simple, effective, and always available. Kawai helps me stay productive throughout the day."
-                            name="Rina P."
-                            role="Freelancer"
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* CTA Section */}
-            <section className="relative z-10 py-16 md:py-24">
-                <div className="container mx-auto px-6">
-                    <div className="max-w-4xl mx-auto bg-gradient-to-r from-pink-400 to-purple-600 rounded-3xl p-8 md:p-12 text-center text-white shadow-2xl shadow-purple-500/20">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
-                        <p className="text-white/80 mb-8 text-lg max-w-xl mx-auto">
-                            Join thousands of users who have simplified their digital life with Kawai-chan.
+                        <p className="text-lg md:text-2xl text-slate-500 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+                            Kawai is your intelligent assistant that lives in your chat. Save notes, manage links, and set reminders without ever leaving WhatsApp.
                         </p>
-                        <LoginModal open={loginOpen} onOpenChange={setLoginOpen}>
+
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
                             <Button
+                                asChild
                                 size="lg"
-                                className="h-14 px-8 text-lg rounded-full bg-white text-primary hover:bg-white/90 shadow-xl hover:-translate-y-1 transition-all duration-300 group font-bold"
+                                className="h-16 px-10 text-xl font-bold rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-2xl shadow-primary/20 transition-all hover:-translate-y-1 group"
                             >
-                                Start Your Journey <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                <a href={waLink} target="_blank" rel="noreferrer">
+                                    Chat with Kawai <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                                </a>
                             </Button>
-                        </LoginModal>
+                            <Button
+                                onClick={handleStart}
+                                variant="outline"
+                                size="lg"
+                                className="h-16 px-10 text-xl font-bold rounded-2xl border-2 hover:bg-slate-50 transition-all"
+                            >
+                                Access Dashboard
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+
+                {/* Features Section - Bento Grid */}
+                <section id="features" className="py-24 bg-slate-50/50 backdrop-blur-sm relative">
+                    <div className="container mx-auto px-6">
+                        <div className="max-w-2xl mx-auto text-center mb-16 space-y-4">
+                            <h2 className="text-4xl font-black text-slate-900">Simply Smarter</h2>
+                            <p className="text-slate-500 text-lg">Four powerful features to streamline your digital productivity.</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 max-w-6xl mx-auto">
+                            <Card className="md:col-span-8 p-8 bg-white border-0 shadow-xl shadow-slate-200/50 rounded-3xl group overflow-hidden relative">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 group-hover:scale-110 transition-transform duration-500" />
+                                <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center">
+                                    <div className="w-20 h-20 shrink-0 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/10">
+                                        <MessageCircle size={40} />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <h3 className="text-2xl font-bold text-slate-900">Conversational Data Entry</h3>
+                                        <p className="text-slate-500 text-lg leading-relaxed">Simply tell Kawai what to save. "Catat ide buat skripsi #kuliah" or "Ingatkan rapat besok jam 10". Our AI handles the rest.</p>
+                                    </div>
+                                </div>
+                            </Card>
+
+                            <Card className="md:col-span-4 p-8 bg-gradient-to-br from-primary to-purple-600 border-0 shadow-2xl shadow-primary/20 rounded-3xl text-white group">
+                                <div className="space-y-6">
+                                    <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20">
+                                        <Shield size={32} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h3 className="text-2xl font-bold uppercase tracking-tighter">100% Secure</h3>
+                                        <p className="text-white/80 leading-relaxed">Your data is encrypted and only accessible by you. Your privacy is our priority.</p>
+                                    </div>
+                                </div>
+                            </Card>
+
+                            <Card className="md:col-span-4 p-8 bg-white border-0 shadow-xl shadow-slate-200/50 rounded-3xl group transition-all hover:-translate-y-2">
+                                <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center text-green-600 mb-6 border border-green-200">
+                                    <Save size={32} />
+                                </div>
+                                <h3 className="text-xl font-bold mb-3">Smart Memory</h3>
+                                <p className="text-slate-500">Save everything from shopping lists to deep thoughts. Tagged and searchable.</p>
+                            </Card>
+
+                            <Card className="md:col-span-4 p-8 bg-white border-0 shadow-xl shadow-slate-200/50 rounded-3xl group transition-all hover:-translate-y-2">
+                                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-6 border border-blue-200">
+                                    <Send size={32} />
+                                </div>
+                                <h3 className="text-xl font-bold mb-3">WhatsApp First</h3>
+                                <p className="text-slate-500">No new apps to install. No new passwords to remember. Just add Kawai to your contacts.</p>
+                            </Card>
+
+                            <Card className="md:col-span-4 p-8 bg-white border-0 shadow-xl shadow-slate-200/50 rounded-3xl group transition-all hover:-translate-y-2">
+                                <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 mb-6 border border-purple-200">
+                                    <Zap size={32} />
+                                </div>
+                                <h3 className="text-xl font-bold mb-3">Lightning Fast</h3>
+                                <p className="text-slate-500">Cloud-synced and available across all your platforms instantly through the dashboard.</p>
+                            </Card>
+                        </div>
+                    </div>
+                </section>
+
+                {/* How It Works - Modern Steps */}
+                <section id="how-it-works" className="py-24">
+                    <div className="container mx-auto px-6">
+                        <div className="max-w-3xl mx-auto text-center mb-20 space-y-4">
+                            <h2 className="text-4xl font-black text-slate-900 italic uppercase">3 Simple Steps</h2>
+                            <p className="text-slate-500 text-lg">Zero friction productivity begins right here.</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto relative">
+                            {/* Connector Line (Desktop Only) */}
+                            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-slate-200 to-transparent z-0 transform -translate-y-12" />
+
+                            <Step
+                                num="01"
+                                icon={<Smartphone size={32} />}
+                                title="Chat on WhatsApp"
+                                desc="Send anything to Kawai. A link, a reminder, or a personal memo."
+                            />
+                            <Step
+                                num="02"
+                                icon={<Zap size={32} />}
+                                title="Auto-Organize"
+                                desc="Our AI categorizes your data instantly and saves it to your cloud."
+                            />
+                            <Step
+                                num="03"
+                                icon={<CheckCircle2 size={32} />}
+                                title="Manage Anywhere"
+                                desc="Access and manage everything through your clean, modern dashboard."
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Stats Section with gradient background */}
+                <section className="py-20 bg-slate-900 overflow-hidden relative">
+                    <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[160px] opacity-30 -mr-[400px] -mt-[400px]" />
+                    <div className="container mx-auto px-6 relative z-10">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
+                            <Stat num="10K+" label="Active Users" />
+                            <Stat num="500K+" label="Messages Sent" />
+                            <Stat num="99%" label="Reliability" />
+                            <Stat num="24/7" label="Availability" />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Testimonials - modern floating cards */}
+                <section id="testimonials" className="py-24 bg-slate-50/50 relative overflow-hidden">
+                    <div className="container mx-auto px-6">
+                        <div className="max-w-2xl mx-auto text-center mb-16 space-y-4">
+                            <h2 className="text-4xl font-black text-slate-900 uppercase">Trusted by thousands</h2>
+                            <p className="text-slate-500 text-lg">Join the cute but powerful productivity revolution.</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                            <Testimonial
+                                quote="Kawai-chan has replaced three different productivity apps for me. Now I just use WA."
+                                name="Alex Johnson"
+                                role="Tech Founder"
+                            />
+                            <Testimonial
+                                quote="The reminder system is flawless. It sends me a WhatsApp message right when I need it."
+                                name="Sarah Lee"
+                                role="Student"
+                                featured
+                            />
+                            <Testimonial
+                                quote="Simple, effective, and actually fun to use. WhatsApp first is a game changer."
+                                name="Michael Chen"
+                                role="Freelancer"
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Final CTA Section */}
+                <section className="py-24 container mx-auto px-6">
+                    <div className="max-w-6xl mx-auto bg-slate-900 rounded-[3rem] p-12 md:p-24 text-center text-white relative overflow-hidden shadow-3xl">
+                        <div className="absolute inset-0 mesh-gradient opacity-20" />
+                        <div className="relative z-10 space-y-10">
+                            <h2 className="text-4xl md:text-7xl font-black tracking-tight max-w-4xl mx-auto leading-[1.1]">
+                                Ready to level up your <span className="text-gradient">productivity?</span>
+                            </h2>
+                            <p className="text-white/60 text-xl max-w-2xl mx-auto leading-relaxed font-medium">
+                                Join our community and simplify your digital life. Kawai-chan is waiting for your first message.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-6 justify-center pt-4">
+                                <Button
+                                    asChild
+                                    size="lg"
+                                    className="h-16 px-12 text-xl font-bold rounded-2xl bg-white text-slate-900 hover:bg-white/90 shadow-2xl transition-all hover:scale-105 active:scale-95"
+                                >
+                                    <a href={waLink} target="_blank" rel="noreferrer">
+                                        Start Your Journey
+                                    </a>
+                                </Button>
+                                <Button
+                                    onClick={handleStart}
+                                    variant="outline"
+                                    size="lg"
+                                    className="h-16 px-12 text-xl font-bold rounded-2xl border-white/20 text-white hover:bg-white/10 transition-all font-heading"
+                                >
+                                    View Dashboard
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
 
             {/* Footer */}
-            <footer className="relative z-10 bg-white/50 backdrop-blur-md border-t border-border/40 pt-16 pb-8">
-                <div className="container mx-auto px-6">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-                        <div className="col-span-2 md:col-span-1">
-                            <div className="flex items-center gap-2 mb-4">
-                                <img src={Logo} alt="Logo" className="w-8 h-8" />
-                                <span className="font-bold text-xl text-primary font-heading">Kawai-chan</span>
+            <footer className="bg-white border-t border-slate-100 py-20 relative z-10">
+                <div className="container mx-auto px-6 max-w-7xl">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 mb-20">
+                        <div className="md:col-span-4 space-y-8">
+                            <div className="flex items-center gap-3">
+                                <img src={Logo} alt="Logo" className="w-10 h-10" />
+                                <span className="font-bold text-2xl tracking-tighter text-slate-900 uppercase">Kawai-chan</span>
                             </div>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                                Making your digital life cuter and smarter, one chat at a time.
+                            <p className="text-slate-500 text-lg leading-relaxed max-w-xs">
+                                Redefining productivity through the simplicity of conversational AI.
                             </p>
+                            <div className="flex gap-4">
+                                <SocialIcon />
+                                <SocialIcon />
+                                <SocialIcon />
+                            </div>
                         </div>
-                        <div>
-                            <h4 className="font-semibold mb-4 text-foreground">Product</h4>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                                <li><a href="#" className="hover:text-primary transition-colors">Features</a></li>
-                                <li><a href="#" className="hover:text-primary transition-colors">Integrations</a></li>
-                                <li><a href="#" className="hover:text-primary transition-colors">Pricing</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold mb-4 text-foreground">Resources</h4>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                                <li><a href="#" className="hover:text-primary transition-colors">Documentation</a></li>
-                                <li><a href="#" className="hover:text-primary transition-colors">Help Center</a></li>
-                                <li><a href="#" className="hover:text-primary transition-colors">Community</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold mb-4 text-foreground">Company</h4>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                                <li><a href="#" className="hover:text-primary transition-colors">About Us</a></li>
-                                <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
-                                <li><a href="#" className="hover:text-primary transition-colors">Terms of Service</a></li>
-                            </ul>
+
+                        <div className="md:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-8">
+                            <FooterColumn
+                                title="Product"
+                                links={["Features", "Integrations", "Roadmap", "Pricing"]}
+                            />
+                            <FooterColumn
+                                title="Resources"
+                                links={["Documentation", "API Guide", "Help Center", "Community"]}
+                            />
+                            <FooterColumn
+                                title="Company"
+                                links={["About Us", "Contact", "Privacy", "Terms"]}
+                            />
                         </div>
                     </div>
-                    <div className="border-t border-border/40 pt-8 text-center text-sm text-muted-foreground">
-                        <p>&copy; {(new Date()).getFullYear()} Kawai Personal Assistant Bot. All rights reserved.</p>
+                    <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-sm font-medium">
+                        <p>&copy; {new Date().getFullYear()} Kawai-chan AI Assistant. Made with ✨ for global productivity.</p>
+                        <div className="flex gap-6">
+                            <a href="#" className="hover:text-slate-900 transition-colors">Privacy Policy</a>
+                            <a href="#" className="hover:text-slate-900 transition-colors">Terms of Service</a>
+                        </div>
                     </div>
                 </div>
             </footer>
@@ -249,66 +334,77 @@ export default function LandingPage() {
     );
 }
 
-// Feature Card Component
-function FeatureCard({ icon, title, desc }) {
+function Step({ num, icon, title, desc }) {
     return (
-        <Card className="p-6 bg-white/80 border-white/50 hover:border-primary/30 transition-all hover:shadow-lg hover:-translate-y-1 duration-300 group h-full">
-            <div className="mb-4 p-3 bg-gradient-to-br from-primary/10 to-purple-100 rounded-2xl w-fit group-hover:scale-110 transition-transform duration-300">
-                {icon}
-            </div>
-            <h3 className="text-lg font-bold mb-2 text-foreground group-hover:text-primary transition-colors">{title}</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">{desc}</p>
-        </Card>
-    );
-}
-
-// Step Card Component
-function StepCard({ step, icon, title, desc }) {
-    return (
-        <div className="text-center group">
-            <div className="relative inline-flex items-center justify-center mb-4">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
+        <div className="text-center group relative z-10">
+            <div className="w-24 h-24 mx-auto bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 flex flex-col items-center justify-center p-4 border border-slate-100 transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-2 group-hover:border-primary/30 group-hover:shadow-primary/5 cursor-default">
+                <div className="text-primary mb-1">
                     {icon}
                 </div>
-                <span className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-primary font-bold text-sm shadow-md border-2 border-primary">
-                    {step}
-                </span>
+                <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{num}</span>
             </div>
-            <h3 className="text-lg font-bold mb-2 text-foreground">{title}</h3>
-            <p className="text-muted-foreground text-sm">{desc}</p>
+            <div className="mt-8 space-y-2">
+                <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">{title}</h3>
+                <p className="text-slate-500 max-w-[240px] mx-auto text-sm leading-relaxed">{desc}</p>
+            </div>
         </div>
     );
 }
 
-// Statistic Card Component
-function StatCard({ number, label }) {
+function Stat({ num, label }) {
     return (
-        <div className="group">
-            <div className="text-4xl md:text-5xl font-extrabold mb-2 group-hover:scale-110 transition-transform duration-300">{number}</div>
-            <div className="text-white/80 text-sm md:text-base">{label}</div>
+        <div className="space-y-2 group">
+            <div className="text-5xl md:text-64px font-black text-white tracking-tighter group-hover:scale-105 transition-transform duration-300">
+                {num}
+            </div>
+            <div className="text-primary font-bold uppercase tracking-widest text-xs">
+                {label}
+            </div>
         </div>
     );
 }
 
-// Testimonial Card Component
-function TestimonialCard({ quote, name, role }) {
+function Testimonial({ quote, name, role, featured = false }) {
     return (
-        <Card className="p-6 bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-            <div className="flex gap-1 mb-4">
+        <Card className={`p-8 rounded-[2rem] border-0 shadow-xl transition-all duration-300 hover:shadow-2xl ${featured ? 'bg-primary text-white scale-105 z-10' : 'bg-white text-slate-900'} hover:-translate-y-2`}>
+            <div className="flex gap-1 mb-6">
                 {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <Star key={i} size={16} fill="currentColor" className={featured ? 'text-white' : 'text-yellow-400'} />
                 ))}
             </div>
-            <p className="text-muted-foreground text-sm leading-relaxed flex-grow mb-4">"{quote}"</p>
-            <div className="flex items-center gap-3 pt-4 border-t border-border/50">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+            <p className={`text-lg italic font-medium leading-relaxed mb-8 ${featured ? 'text-white' : 'text-slate-700'}`}>"{quote}"</p>
+            <div className={`flex items-center gap-4 pt-6 border-t ${featured ? 'border-white/20' : 'border-slate-100'}`}>
+                <div className={`w-12 h-12 rounded-2xl ${featured ? 'bg-white text-primary' : 'bg-primary text-white'} flex items-center justify-center font-black text-lg shadow-lg`}>
                     {name.charAt(0)}
                 </div>
                 <div>
-                    <div className="font-semibold text-sm text-foreground">{name}</div>
-                    <div className="text-xs text-muted-foreground">{role}</div>
+                    <p className="font-black uppercase tracking-tight text-sm leading-none">{name}</p>
+                    <p className={`text-xs mt-1 ${featured ? 'text-white/60' : 'text-slate-400'}`}>{role}</p>
                 </div>
             </div>
         </Card>
+    );
+}
+
+function FooterColumn({ title, links }) {
+    return (
+        <div className="space-y-6">
+            <h4 className="font-black uppercase tracking-widest text-xs text-slate-900">{title}</h4>
+            <ul className="space-y-4">
+                {links.map((link, idx) => (
+                    <li key={idx}>
+                        <a href="#" className="text-slate-500 hover:text-primary transition-colors text-sm font-medium">{link}</a>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+function SocialIcon() {
+    return (
+        <a href="#" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all duration-300 border border-slate-100">
+            <Send size={18} />
+        </a>
     );
 }

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { getNotes, updateNote, deleteNote, getNoteDetail, createNote } from "@/api/notes";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, Plus, Edit2, Trash2, CalendarIcon, Eye } from "lucide-react";
+import { Search, Plus, Edit2, Trash2, Calendar, Eye, Clock, FileText, X } from "lucide-react";
 import { format } from "date-fns";
 import Swal from 'sweetalert2';
 import {
@@ -38,9 +38,7 @@ export default function NotesPage() {
     const loadNotes = async () => {
         if (user) {
             try {
-                // Pass search param if exists
                 const data = await getNotes(search);
-                // data might be array directly if backend returns array
                 setNotes(Array.isArray(data) ? data : data.notes || []);
             } catch (error) {
                 console.error("Failed to load notes", error);
@@ -50,7 +48,12 @@ export default function NotesPage() {
 
     const handleCreate = async () => {
         if (!newNoteContent.trim()) {
-            return Swal.fire('Error', 'Content cannot be empty', 'warning');
+            return Swal.fire({
+                title: 'Note Content Empty',
+                text: 'Please write something before saving.',
+                icon: 'warning',
+                customClass: { popup: 'rounded-[1.5rem]' }
+            });
         }
 
         setIsCreating(true);
@@ -60,13 +63,19 @@ export default function NotesPage() {
                 icon: 'success',
                 title: 'Note Created',
                 showConfirmButton: false,
-                timer: 1500
+                timer: 1500,
+                customClass: { popup: 'rounded-[1.5rem]' }
             });
             setNewNoteContent("");
             setCreateOpen(false);
             loadNotes();
         } catch (error) {
-            Swal.fire('Error', 'Failed to create note', 'error');
+            Swal.fire({
+                title: 'Error',
+                text: 'Failed to create note',
+                icon: 'error',
+                customClass: { popup: 'rounded-[1.5rem]' }
+            });
         } finally {
             setIsCreating(false);
         }
@@ -75,7 +84,7 @@ export default function NotesPage() {
     const handleView = async (note) => {
         try {
             setViewOpen(true);
-            setSelectedNote(note); // temporary show what we have
+            setSelectedNote(note);
             const detail = await getNoteDetail(note._id);
             setSelectedNote(detail);
         } catch (error) {
@@ -85,18 +94,31 @@ export default function NotesPage() {
 
     const handleEdit = (note) => {
         Swal.fire({
-            title: 'Edit Note',
+            title: 'Refine Note',
             input: 'textarea',
             inputValue: note.content,
             showCancelButton: true,
-            confirmButtonText: 'Save',
+            confirmButtonText: 'Update Content',
+            confirmButtonColor: 'hsl(var(--primary))',
+            cancelButtonColor: '#64748b',
             showLoaderOnConfirm: true,
+            customClass: {
+                popup: 'rounded-[1.5rem] border-0',
+                input: 'rounded-xl border-slate-100 bg-slate-50 p-4 focus:ring-0',
+                confirmButton: 'rounded-xl px-6 py-2',
+                cancelButton: 'rounded-xl px-6 py-2'
+            },
             preConfirm: (newContent) => {
                 return updateNote(note._id, newContent);
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire('Saved!', 'Your note has been updated.', 'success');
+                Swal.fire({
+                    title: 'Success',
+                    text: 'Your note has been refined successfully.',
+                    icon: 'success',
+                    customClass: { popup: 'rounded-[1.5rem]' }
+                });
                 loadNotes();
             }
         })
@@ -104,19 +126,34 @@ export default function NotesPage() {
 
     const handleDelete = (id) => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Delete Permanently?',
+            text: "This action cannot be undone.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonText: 'Yes, delete it!',
+            customClass: {
+                popup: 'rounded-[1.5rem] border-0',
+                confirmButton: 'rounded-xl px-6 py-2',
+                cancelButton: 'rounded-xl px-6 py-2'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 deleteNote(id).then(() => {
-                    Swal.fire('Deleted!', 'Your note has been deleted.', 'success');
+                    Swal.fire({
+                        title: 'Deleted',
+                        text: 'Note has been removed from your history.',
+                        icon: 'success',
+                        customClass: { popup: 'rounded-[1.5rem]' }
+                    });
                     loadNotes();
                 }).catch(() => {
-                    Swal.fire('Error!', 'Failed to delete note.', 'error');
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Failed to delete note.',
+                        icon: 'error',
+                        customClass: { popup: 'rounded-[1.5rem]' }
+                    });
                 });
             }
         })
@@ -125,127 +162,145 @@ export default function NotesPage() {
     const filteredNotes = notes.filter(n => n.content.toLowerCase().includes(search.toLowerCase()));
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold">My Notes</h1>
-                    <p className="text-muted-foreground">Manage your saved texts and ideas.</p>
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-1">
+                    <h2 className="text-3xl font-black tracking-tighter text-slate-900 uppercase font-heading">
+                        My <span className="text-gradient">Personal Notes</span>
+                    </h2>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                        {filteredNotes.length} Thoughts & Records Captured
+                    </p>
                 </div>
-                <div className="flex gap-2 w-full md:w-auto">
-                    <div className="relative flex-1 md:w-64">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+
+                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                    <div className="relative group min-w-[280px]">
+                        <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 group-focus-within:text-primary transition-colors" />
                         <Input
-                            placeholder="Search notes..."
-                            className="pl-9 bg-white"
+                            placeholder="Search your notes..."
+                            className="pl-10 h-11 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all shadow-none focus:ring-0 focus:border-primary/30 font-medium"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
-                    <Button onClick={() => setCreateOpen(true)} className="bg-primary hover:bg-primary/90">
-                        <Plus className="mr-2 h-4 w-4" /> Create
+                    <Button
+                        onClick={() => setCreateOpen(true)}
+                        className="h-11 px-6 rounded-2xl bg-primary hover:bg-primary/90 font-bold uppercase text-[10px] tracking-widest shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]"
+                    >
+                        <Plus className="mr-2 h-4 w-4 stroke-[3]" /> Create New Note
                     </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {/* Notes Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredNotes.map((note, i) => (
-                    <Card key={i} className="group hover:shadow-md transition-all duration-300 border-border/60">
-                        <CardHeader className="pb-3">
-                            <div className="flex justify-between items-start">
-                                <Badge variant="outline" className="bg-blue-50 text-blue-600 hover:bg-blue-50 border-blue-200">
-                                    {note.type || "Text"}
+                    <Card key={i} className="group border-0 shadow-xl shadow-slate-200/50 rounded-[2rem] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden bg-white">
+                        <CardHeader className="p-7 pb-4">
+                            <div className="flex justify-between items-center">
+                                <Badge className="bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border-primary/10 hover:bg-primary/10 truncate max-w-[120px]">
+                                    {note.type || "General"}
                                 </Badge>
-                                <span className="text-xs text-muted-foreground flex items-center gap-1">
-                                    <CalendarIcon size={12} />
-                                    {note.created_at ? format(new Date(note.created_at), 'MMM dd, yyyy') : 'N/A'}
-                                </span>
+                                <div className="flex items-center gap-1.5 text-slate-400">
+                                    <Clock size={12} className="stroke-[2.5]" />
+                                    <span className="text-[10px] font-bold uppercase tracking-widest">
+                                        {note.created_at ? format(new Date(note.created_at), 'MMM dd') : 'N/A'}
+                                    </span>
+                                </div>
                             </div>
                         </CardHeader>
-                        <CardContent>
-                            <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap line-clamp-4">
+                        <CardContent className="px-7 py-0">
+                            <p className="text-slate-600 font-bold text-sm leading-relaxed whitespace-pre-wrap line-clamp-6 min-h-[120px]">
                                 {note.content}
                             </p>
                         </CardContent>
-                        <CardFooter className="pt-0 flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-blue-500" onClick={() => handleView(note)}>
-                                <Eye size={16} />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={() => handleEdit(note)}>
-                                <Edit2 size={16} />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-red-500" onClick={() => handleDelete(note._id)}>
-                                <Trash2 size={16} />
-                            </Button>
-                        </CardFooter>
+                        <div className="p-7 pt-4 flex gap-2">
+                            <NoteActionButton icon={<Eye size={16} />} onClick={() => handleView(note)} color="blue" />
+                            <NoteActionButton icon={<Edit2 size={16} />} onClick={() => handleEdit(note)} color="slate" />
+                            <NoteActionButton icon={<Trash2 size={16} />} onClick={() => handleDelete(note._id)} color="red" />
+                        </div>
                     </Card>
                 ))}
 
                 {filteredNotes.length === 0 && (
-                    <div className="col-span-full py-12 text-center text-muted-foreground bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-                        <FileText size={48} className="mx-auto mb-4 opacity-20" />
-                        <p>No notes found matching your search.</p>
+                    <div className="col-span-full py-24 flex flex-col items-center justify-center space-y-4">
+                        <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center">
+                            <FileText size={32} className="text-slate-200" />
+                        </div>
+                        <div className="text-center">
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">No matching notes found</p>
+                            <p className="text-slate-300 text-xs font-medium">Try a different search term or create a new note.</p>
+                        </div>
                     </div>
                 )}
             </div>
 
             {/* Create Note Dialog */}
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                <DialogContent className="max-w-md bg-white">
-                    <DialogHeader>
-                        <DialogTitle>Create New Note</DialogTitle>
-                        <DialogDescription>
-                            Write down your thoughts or ideas.
+                <DialogContent className="max-w-md bg-white border-0 rounded-[2.5rem] shadow-2xl p-0 overflow-hidden">
+                    <DialogHeader className="p-8 pb-4">
+                        <DialogTitle className="text-xl font-black uppercase tracking-tight font-heading">Capture Thought</DialogTitle>
+                        <DialogDescription className="text-slate-400 text-xs font-semibold">
+                            Saving your ideas to your private collection.
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="space-y-4 py-4">
-                        <div className="space-y-2">
-                            <Label>Content</Label>
+                    <div className="p-8 pt-0 space-y-6">
+                        <div className="space-y-3">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Note Content</Label>
                             <Textarea
-                                placeholder="Type your note here..."
-                                className="min-h-[150px]"
+                                placeholder="Write what's on your mind..."
+                                className="min-h-[180px] rounded-3xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all p-5 font-bold text-slate-900 shadow-none focus-visible:ring-primary/20"
                                 value={newNoteContent}
                                 onChange={(e) => setNewNoteContent(e.target.value)}
                             />
                         </div>
+                        <div className="flex gap-4">
+                            <Button variant="outline" className="flex-1 h-12 rounded-2xl border-slate-100 font-bold uppercase text-[10px] tracking-widest" onClick={() => setCreateOpen(false)}>
+                                Discard
+                            </Button>
+                            <Button
+                                onClick={handleCreate}
+                                disabled={isCreating}
+                                className="flex-1 h-12 rounded-2xl bg-primary hover:bg-primary/90 font-bold uppercase text-[10px] tracking-widest"
+                            >
+                                {isCreating ? "Saving..." : "Save Note"}
+                            </Button>
+                        </div>
                     </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancel</Button>
-                        <Button onClick={handleCreate} disabled={isCreating}>
-                            {isCreating ? "Saving..." : "Save Note"}
-                        </Button>
-                    </DialogFooter>
                 </DialogContent>
             </Dialog>
 
+            {/* View Note Dialog */}
             <Dialog open={viewOpen} onOpenChange={setViewOpen}>
-                <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-md">
-                    <DialogHeader>
-                        <DialogTitle className="text-xl font-bold flex items-center gap-2">
-                            Note Details
-                            {selectedNote?.type && (
-                                <Badge variant="outline" className="ml-2 bg-blue-50 text-blue-600">
-                                    {selectedNote.type}
-                                </Badge>
-                            )}
-                        </DialogTitle>
-                        <DialogDescription>
-                            Created at {selectedNote?.created_at ? format(new Date(selectedNote.created_at), 'PPP pp') : 'N/A'}
-                        </DialogDescription>
+                <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-md border-0 rounded-[2.5rem] shadow-2xl p-0 overflow-hidden outline-none">
+                    <DialogHeader className="p-8 pb-4">
+                        <div className="flex justify-between items-start">
+                            <div className="space-y-1">
+                                <DialogTitle className="text-2xl font-black uppercase tracking-tight font-heading">Note Details</DialogTitle>
+                                <DialogDescription className="text-slate-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                                    <Clock size={12} /> {selectedNote?.created_at ? format(new Date(selectedNote.created_at), 'PPP pp') : 'Private Record'}
+                                </DialogDescription>
+                            </div>
+                            <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 bg-slate-100/50" onClick={() => setViewOpen(false)}>
+                                <X size={18} />
+                            </Button>
+                        </div>
                     </DialogHeader>
 
-                    <div className="space-y-4 mt-4">
-                        <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 whitespace-pre-wrap leading-relaxed text-sm md:text-base text-foreground/80">
+                    <div className="p-8 pt-0 space-y-8">
+                        <div className="bg-slate-50/50 p-7 rounded-[2rem] border border-slate-100 whitespace-pre-wrap leading-relaxed font-bold text-slate-700">
                             {selectedNote?.content}
                         </div>
 
                         {selectedNote?.related_tags && selectedNote.related_tags.length > 0 && (
-                            <div className="space-y-2">
-                                <h4 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
-                                    Related Tags
+                            <div className="space-y-3">
+                                <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                    Smart Classifications
                                 </h4>
                                 <div className="flex flex-wrap gap-2">
                                     {selectedNote.related_tags.map((tag, i) => (
-                                        <Badge key={i} variant="secondary" className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100">
+                                        <Badge key={i} className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest">
                                             #{tag.name || tag}
                                         </Badge>
                                     ))}
@@ -259,25 +314,22 @@ export default function NotesPage() {
     );
 }
 
-function FileText({ size, className }) {
+function NoteActionButton({ icon, onClick, color }) {
+    const variants = {
+        blue: "text-blue-500 hover:bg-blue-50",
+        slate: "text-slate-400 hover:bg-slate-100",
+        red: "text-red-500 hover:bg-red-50"
+    };
+
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width={size}
-            height={size}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={className}
+        <Button
+            variant="ghost"
+            size="icon"
+            className={`h-11 w-11 rounded-2xl transition-all ${variants[color]}`}
+            onClick={onClick}
         >
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" x2="8" y1="13" y2="13" />
-            <line x1="16" x2="8" y1="17" y2="17" />
-            <line x1="10" x2="8" y1="9" y2="9" />
-        </svg>
-    )
+            {icon}
+        </Button>
+    );
 }
+

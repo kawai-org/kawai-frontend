@@ -5,6 +5,17 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Logo from "@/assets/logo.png";
 import Swal from 'sweetalert2';
+import {
+    User,
+    Phone,
+    Lock,
+    Key,
+    ArrowLeft,
+    CheckCircle2,
+    MessageCircle,
+    ShieldCheck,
+    Zap
+} from 'lucide-react';
 
 export default function AuthPage() {
     const [isRegister, setIsRegister] = useState(false);
@@ -55,139 +66,247 @@ export default function AuthPage() {
     };
 
     return (
-        <div className="min-h-screen w-full flex bg-background overflow-hidden font-sans">
-            {/* Left Side - Hero / Branding (Hidden on mobile) */}
-            <div className="hidden lg:flex w-1/2 relative bg-gradient-to-r from-pink-400 to-purple-600 items-center justify-center p-12 overflow-hidden">
-                <div className="absolute inset-0 z-0">
-                    <div className="absolute top-[-20%] left-[-20%] w-[800px] h-[800px] bg-white/10 rounded-full blur-[120px]" />
-                    <div className="absolute bottom-[-20%] right-[-20%] w-[600px] h-[600px] bg-white/10 rounded-full blur-[100px]" />
+        <div className="min-h-screen w-full flex bg-slate-50 overflow-hidden font-sans relative">
+            {/* Background Blob for Mobile */}
+            <div className="fixed lg:hidden inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute bottom-[-5%] left-[-5%] w-48 h-48 bg-purple-500/10 rounded-full blur-2xl" />
+            </div>
+
+            {/* Left Side - Hero / Branding (Premium Mesh) */}
+            <div className="hidden lg:flex w-5/12 relative mesh-gradient items-center justify-center p-16 overflow-hidden shadow-[20px_0_40px_rgba(0,0,0,0.1)]">
+                <div className="absolute inset-0 opacity-40 mix-blend-overlay">
+                    <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.4),transparent)]" />
                 </div>
 
-                <div className="relative z-10 text-center text-white space-y-8 max-w-lg">
-                    <img src={Logo} alt="Kawai Logo" className="w-32 h-32 mx-auto drop-shadow-2xl bg-white/20 p-4 rounded-full backdrop-blur-sm" />
-                    <div>
-                        <h1 className="text-5xl font-extrabold tracking-tight mb-4">Adventure starts here</h1>
-                        <p className="text-indigo-100 text-xl leading-relaxed">
-                            Join our community and organize your digital life with Kawai-chan Assistant.
+                <div className="relative z-10 text-center text-white space-y-10 max-w-sm">
+                    <div className="relative inline-block group">
+                        <div className="absolute inset-0 bg-white/20 rounded-full blur-2xl group-hover:blur-3xl transition-all duration-500 scale-110" />
+                        <div className="bg-white/20 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white/30 shadow-2xl relative">
+                            <img src={Logo} alt="Kawai Logo" className="w-24 h-24 drop-shadow-lg animate-bounce-slow" />
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h1 className="text-5xl font-black tracking-tight leading-tight uppercase font-heading">
+                            One Step <br /> to <span className="text-slate-900/40">Smarter</span>
+                        </h1>
+                        <p className="text-white/80 text-lg font-medium leading-relaxed italic">
+                            "Organize your thoughts and tasks with a companion that truly understands you."
                         </p>
                     </div>
+
+                    <div className="flex justify-center gap-3 pt-4">
+                        <div className="flex -space-x-3">
+                            {[1, 2, 3, 4].map(i => (
+                                <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-500 shadow-sm">
+                                    {String.fromCharCode(64 + i)}
+                                </div>
+                            ))}
+                        </div>
+                        <p className="text-xs font-bold text-white/60 self-center uppercase tracking-widest">+10K Users Joined</p>
+                    </div>
                 </div>
+
+                {/* Decorative particles */}
+                <div className="absolute top-10 left-10 w-2 h-2 bg-white/40 rounded-full animate-ping" />
+                <div className="absolute bottom-20 right-20 w-3 h-3 bg-white/30 rounded-full animate-float" />
             </div>
 
             {/* Right Side - Forms */}
-            <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative">
-                {/* Mobile Background Elements */}
-                <div className="absolute lg:hidden top-[-20%] right-[-10%] w-[300px] h-[300px] bg-primary/20 rounded-full blur-[80px]" />
+            <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative z-10">
+                <div className="w-full max-w-md space-y-10 relative">
+                    {/* Floating Back Button */}
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="absolute -top-16 left-0 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-xl group transition-all"
+                        asChild
+                    >
+                        <a href="/">
+                            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Home
+                        </a>
+                    </Button>
 
-                <div className="w-full max-w-md space-y-8 relative z-10">
-                    <div className="text-center lg:text-left space-y-2">
-                        <div className="lg:hidden mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                            <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" />
+                    <div className="text-center md:text-left space-y-3">
+                        <div className="lg:hidden mx-auto w-20 h-20 bg-white shadow-xl shadow-primary/10 rounded-3xl flex items-center justify-center p-3 mb-6 border border-slate-50">
+                            <img src={Logo} alt="Logo" className="w-full h-full object-contain" />
                         </div>
-                        <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                            {isRegister ? "Create Account" : "Welcome Back"}
+                        <h2 className="text-4xl font-black tracking-tight text-slate-900 uppercase font-heading">
+                            {isRegister ? "Join Us" : "Welcome"}
                         </h2>
-                        <p className="text-muted-foreground">
-                            {isRegister ? "Enter your details below to create your account" : "Login to access your personalized dashboard"}
+                        <p className="text-slate-400 font-medium">
+                            {isRegister
+                                ? "Become part of the most kawaii productivity community."
+                                : "Login to pick up right where you left off."}
                         </p>
                     </div>
 
-                    <Card className="border-0 shadow-none bg-transparent">
-                        <CardContent className="p-0 space-y-6">
+                    <Card className="border-0 shadow-2xl shadow-slate-200/60 rounded-[2rem] bg-white relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
 
+                        <CardContent className="p-8 md:p-10 relative z-10">
                             {/* Unified Login via WhatsApp */}
                             {!isRegister && (
-                                <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-                                    <div className="text-center mb-4">
-                                        <h3 className="text-lg font-semibold text-gray-700">Login</h3>
-                                        <p className="text-sm text-muted-foreground">Login via WhatsApp Magic Link</p>
-                                    </div>
-
-                                    {/* Magic Link Button */}
-                                    <div className="bg-white p-6 rounded-2xl border border-blue-100 shadow-sm text-center space-y-4">
-                                        <Button
-                                            asChild
-                                            className="w-full h-14 text-lg bg-[#25D366] hover:bg-[#128C7E] text-white font-bold rounded-xl shadow-md transition-transform hover:scale-[1.02]"
-                                        >
-                                            <a
-                                                href={`https://wa.me/${import.meta.env.VITE_BOT_NUMBER}?text=Dashboard`}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="flex items-center justify-center gap-3"
-                                                onClick={(e) => {
-                                                    if (!import.meta.env.VITE_BOT_NUMBER) {
-                                                        e.preventDefault();
-                                                        Swal.fire({
-                                                            icon: 'error',
-                                                            title: 'Configuration Error',
-                                                            text: 'VITE_BOT_NUMBER is not set in .env file! Please contact administrator.'
-                                                        });
-                                                    }
-                                                }}
+                                <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+                                    <div className="space-y-6">
+                                        <div className="relative group/btn">
+                                            <div className="absolute -inset-1 bg-gradient-to-r from-[#25D366] to-[#128C7E] rounded-2xl blur opacity-20 group-hover/btn:opacity-40 transition duration-500" />
+                                            <Button
+                                                asChild
+                                                className="w-full h-16 text-xl bg-[#25D366] hover:bg-[#128C7E] text-white font-black rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] border-0"
                                             >
-                                                <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                                                </svg>
-                                                Login via WhatsApp
-                                            </a>
-                                        </Button>
-                                        <p className="text-xs text-muted-foreground">
-                                            We will send a login link to your WhatsApp number.
-                                        </p>
-                                        <p className="text-xs text-primary font-medium">
-                                            Your role (User/Admin) will be determined automatically.
-                                        </p>
+                                                <a
+                                                    href={`https://wa.me/${import.meta.env.VITE_BOT_NUMBER}?text=Dashboard`}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="flex items-center justify-center gap-4"
+                                                    onClick={(e) => {
+                                                        if (!import.meta.env.VITE_BOT_NUMBER) {
+                                                            e.preventDefault();
+                                                            Swal.fire({
+                                                                icon: 'error',
+                                                                title: 'Ops!',
+                                                                text: 'WhatsApp bot configuration is missing. Contact support.'
+                                                            });
+                                                        }
+                                                    }}
+                                                >
+                                                    <MessageCircle className="w-7 h-7 fill-white/20" />
+                                                    LOGIN VIA WA
+                                                </a>
+                                            </Button>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-4">
+                                            <InfoCard
+                                                icon={<Zap className="w-4 h-4 text-amber-500" />}
+                                                text="Magic Link validation"
+                                            />
+                                            <InfoCard
+                                                icon={<ShieldCheck className="w-4 h-4 text-blue-500" />}
+                                                text="Secure auto-role detection"
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="pt-4 border-t border-border/50 flex flex-col gap-2 text-center text-sm">
-                                        <p className="text-muted-foreground">
-                                            Don't have an account?{" "}
-                                            <button onClick={() => setIsRegister(true)} className="font-semibold text-primary hover:underline">
-                                                Sign up
-                                            </button>
-                                        </p>
+                                    <div className="relative flex items-center py-2">
+                                        <div className="flex-grow border-t border-slate-100"></div>
+                                        <span className="flex-shrink mx-4 text-slate-300 text-xs font-black uppercase tracking-widest">Or Register</span>
+                                        <div className="flex-grow border-t border-slate-100"></div>
+                                    </div>
+
+                                    <div className="text-center">
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setIsRegister(true)}
+                                            className="w-full h-14 rounded-2xl border-slate-100 text-slate-600 font-bold hover:bg-slate-50 hover:text-primary hover:border-primary/20 transition-all border-2"
+                                        >
+                                            CREATE NEW ACCOUNT
+                                        </Button>
                                     </div>
                                 </div>
                             )}
 
                             {/* Register Form */}
                             {isRegister && (
-                                <form onSubmit={handleRegister} className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label>Name</Label>
-                                            <Input placeholder="John Doe" value={regName} onChange={e => setRegName(e.target.value)} required />
+                                <form onSubmit={handleRegister} className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                                    <div className="space-y-5">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            <div className="space-y-2">
+                                                <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Nama Lengkap</Label>
+                                                <div className="relative group">
+                                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
+                                                    <Input
+                                                        placeholder="Kawai Dev"
+                                                        className="h-12 pl-11 rounded-xl border-slate-100 bg-slate-50 focus:bg-white transition-all shadow-sm"
+                                                        value={regName}
+                                                        onChange={e => setRegName(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Phone Number</Label>
+                                                <div className="relative group">
+                                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
+                                                    <Input
+                                                        placeholder="628123..."
+                                                        className="h-12 pl-11 rounded-xl border-slate-100 bg-slate-50 focus:bg-white transition-all shadow-sm"
+                                                        value={regPhone}
+                                                        onChange={e => setRegPhone(e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Phone</Label>
-                                            <Input placeholder="628..." value={regPhone} onChange={e => setRegPhone(e.target.value)} required />
+                                            <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Create Password</Label>
+                                            <div className="relative group">
+                                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
+                                                <Input
+                                                    type="password"
+                                                    placeholder="••••••••"
+                                                    className="h-12 pl-11 rounded-xl border-slate-100 bg-slate-50 focus:bg-white transition-all shadow-sm"
+                                                    value={regPassword}
+                                                    onChange={e => setRegPassword(e.target.value)}
+                                                    required
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Password</Label>
-                                        <Input type="password" placeholder="Create password" value={regPassword} onChange={e => setRegPassword(e.target.value)} required />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Secret Code (Optional)</Label>
-                                        <Input type="password" placeholder="For Admins only" value={regSecret} onChange={e => setRegSecret(e.target.value)} />
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1 flex justify-between">
+                                                Admin Code
+                                                <span className="text-[10px] text-slate-300 lowercase font-medium">Optional</span>
+                                            </Label>
+                                            <div className="relative group">
+                                                <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
+                                                <Input
+                                                    type="password"
+                                                    placeholder="Admin secret"
+                                                    className="h-12 pl-11 rounded-xl border-slate-100 bg-slate-50 focus:bg-white transition-all shadow-sm"
+                                                    value={regSecret}
+                                                    onChange={e => setRegSecret(e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <Button type="submit" className="w-full h-11 text-base bg-gradient-to-r from-pink-400 to-purple-600 hover:from-pink-500 hover:to-purple-700 text-white shadow-md transition-all hover:scale-[1.02]">
-                                        Create Account
+                                    <Button type="submit" className="w-full h-14 text-lg bg-primary hover:bg-primary/90 text-white font-black rounded-2xl shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                                        FINISH ADVENTURE
                                     </Button>
 
-                                    <p className="text-center text-sm text-muted-foreground pt-2">
-                                        Already have an account?{" "}
-                                        <button type="button" onClick={() => setIsRegister(false)} className="font-semibold text-primary hover:underline">
-                                            Login
+                                    <p className="text-center text-sm font-bold text-slate-400 py-2">
+                                        Have account?{" "}
+                                        <button type="button" onClick={() => setIsRegister(false)} className="text-primary hover:underline underline-offset-4">
+                                            Login here
                                         </button>
                                     </p>
                                 </form>
                             )}
                         </CardContent>
                     </Card>
+
+                    {/* Footer Info */}
+                    <div className="flex justify-center items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 pt-4">
+                        <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" /> GDPR Ready</span>
+                        <div className="w-1 h-1 bg-slate-200 rounded-full" />
+                        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3" /> SLA 99.9%</span>
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
+
+function InfoCard({ icon, text }) {
+    return (
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 group">
+            <div className="bg-white p-1.5 rounded-lg shadow-sm border border-slate-50 group-hover:scale-110 transition-transform">
+                {icon}
+            </div>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-tight">{text}</p>
+        </div>
+    )
+}
+

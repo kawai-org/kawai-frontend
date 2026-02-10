@@ -1,51 +1,62 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Home } from "lucide-react";
+import { MessageSquare, Home, ArrowLeft, Ghost } from "lucide-react";
 import Logo from "@/assets/logo.png";
 
 export default function NotFoundPage() {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 font-sans">
-            <div className="text-center max-w-md w-full p-8 bg-white rounded-3xl shadow-xl border border-border/50 relative overflow-hidden">
-                {/* Decor blobs */}
-                <div className="absolute top-[-50px] right-[-50px] w-32 h-32 bg-primary/10 rounded-full blur-[40px]" />
-                <div className="absolute bottom-[-20px] left-[-20px] w-24 h-24 bg-purple-500/10 rounded-full blur-[30px]" />
+        <div className="min-h-screen flex items-center justify-center bg-slate-950 p-6 relative overflow-hidden">
+            {/* Animated Background Elements */}
+            <div className="absolute top-1/4 -left-20 w-80 h-80 bg-primary/10 rounded-full blur-[100px] animate-pulse"></div>
+            <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] animate-pulse transition-all duration-1000"></div>
 
-                <div className="relative z-10 flex flex-col items-center">
-                    <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6 animate-in zoom-in duration-500">
-                        <span className="text-4xl font-bold text-red-500">404</span>
+            <div className="relative z-10 text-center max-w-xl w-full">
+                {/* 404 Glitch Style */}
+                <div className="relative inline-block mb-10">
+                    <h1 className="text-[120px] md:text-[180px] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/10 animate-in zoom-in duration-1000">
+                        404
+                    </h1>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full flex items-center justify-center opacity-20 blur-2xl">
+                        <h1 className="text-[140px] md:text-[200px] font-black text-primary">404</h1>
                     </div>
+                </div>
 
-                    <h1 className="text-2xl font-bold text-gray-900 mb-2">Oops! Where are we?</h1>
-                    <p className="text-muted-foreground mb-8">
-                        Kawai-chan looked everywhere but couldn't find this page. Maybe it got lost in the digital void!
+                <div className="space-y-4 mb-12 px-4">
+                    <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight font-heading">
+                        Sector Not <span className="text-primary italic">Found</span>
+                    </h2>
+                    <p className="text-slate-400 font-medium text-sm md:text-base max-w-md mx-auto leading-relaxed">
+                        Kawai-chan scanned the entire database but this coordinate doesn't exist. You might have drifted out of bounds!
                     </p>
+                </div>
 
-                    <div className="grid gap-3 w-full">
-                        <Button
-                            onClick={() => navigate('/')}
-                            className="w-full h-11 text-base gap-2 rounded-xl shadow-lg shadow-primary/20"
-                        >
-                            <Home size={18} />
-                            Go Home
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => navigate(-1)}
-                            className="w-full h-11 text-base gap-2 rounded-xl"
-                        >
-                            Go Back
-                        </Button>
-                    </div>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center px-6">
+                    <Button
+                        onClick={() => navigate('/')}
+                        className="w-full sm:w-auto h-14 px-10 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase text-[11px] tracking-[0.2em] shadow-xl shadow-primary/20 transition-all hover:scale-[1.05]"
+                    >
+                        <Home size={16} className="mr-2 stroke-[3]" /> Return To Core
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        onClick={() => navigate(-1)}
+                        className="w-full sm:w-auto h-14 px-10 rounded-2xl text-slate-400 hover:text-white hover:bg-white/5 font-black uppercase text-[11px] tracking-[0.2em] transition-all"
+                    >
+                        <ArrowLeft size={16} className="mr-2 stroke-[3]" /> Previous Sector
+                    </Button>
+                </div>
 
-                    <div className="mt-8 pt-8 border-t border-gray-100 w-full flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                        <img src={Logo} alt="Logo" className="w-4 h-4 opacity-50" />
-                        <span>Kawai-chan Assistant</span>
+                {/* Footer Logo */}
+                <div className="mt-20 flex flex-col items-center gap-3">
+                    <div className="w-10 h-10 p-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md">
+                        <img src={Logo} alt="Logo" className="w-full h-full object-contain brightness-0 invert opacity-50" />
                     </div>
+                    <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-600">Kawai-chan Intelligent Assistant</p>
                 </div>
             </div>
         </div>
     );
 }
+

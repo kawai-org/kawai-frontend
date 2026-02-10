@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText } from "lucide-react";
+import { FileText, ChevronRight, Clock } from "lucide-react";
 import { getNotes } from "@/api/notes";
 
 export default function DashboardRecentNotes() {
@@ -11,7 +11,6 @@ export default function DashboardRecentNotes() {
         const loadRecent = async () => {
             try {
                 // Fetch notes with empty search to get all
-                // Ideally backend should support ?limit=5
                 const notesData = await getNotes();
                 const notes = Array.isArray(notesData) ? notesData : [];
                 setRecentNotes(notes.slice(0, 5));
@@ -25,34 +24,73 @@ export default function DashboardRecentNotes() {
         loadRecent();
     }, []);
 
+    const formatTime = (dateStr) => {
+        if (!dateStr) return "Just now";
+        try {
+            const date = new Date(dateStr.$date || dateStr);
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+
+            if (diffInSeconds < 60) return "Just now";
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+            return date.toLocaleDateString();
+        } catch (e) {
+            return "Recently";
+        }
+    };
+
     return (
-        <Card className="border-border/40 shadow-sm">
-            <CardHeader>
-                <CardTitle>Recent Notes</CardTitle>
+        <Card className="border-0 shadow-xl shadow-slate-200/50 rounded-[2rem] overflow-hidden bg-white">
+            <CardHeader className="p-8 pb-2">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <CardTitle className="text-xl font-black uppercase tracking-tight font-heading">Recent Notes</CardTitle>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Your latest snapshots</p>
+                    </div>
+                    <div className="bg-slate-50 p-2 rounded-xl text-slate-400">
+                        <FileText size={18} />
+                    </div>
+                </div>
             </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
+            <CardContent className="p-4 md:p-6 pb-8">
+                <div className="space-y-2">
                     {loading ? (
-                        <div className="flex justify-center p-4">
-                            <span className="text-sm text-muted-foreground animate-pulse">Loading recent notes...</span>
+                        <div className="space-y-3 p-4">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="h-16 w-full bg-slate-50 rounded-2xl animate-pulse" />
+                            ))}
                         </div>
                     ) : (
                         <>
                             {recentNotes.map((note, i) => (
-                                <div key={i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
-                                    <div className="bg-blue-50 p-2 rounded-lg text-blue-500 flex-shrink-0">
-                                        <FileText size={16} />
+                                <div key={i} className="group flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 transition-all duration-300 border border-transparent hover:border-slate-100 cursor-pointer">
+                                    <div className="flex items-center gap-4 overflow-hidden">
+                                        <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                            <FileText size={18} />
+                                        </div>
+                                        <div className="overflow-hidden space-y-1">
+                                            <p className="text-sm font-bold text-slate-900 truncate group-hover:text-primary transition-colors">
+                                                {note.content || "Empty note"}
+                                            </p>
+                                            <div className="flex items-center gap-1.5">
+                                                <Clock size={10} className="text-slate-300" />
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                                    {formatTime(note.created_at)}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="overflow-hidden">
-                                        <p className="text-sm font-medium truncate">{note.content}</p>
-                                        <p className="text-xs text-muted-foreground mt-1 truncate">
-                                            {note.created_at ? new Date(note.created_at.$date || note.created_at).toLocaleDateString() : "Just now"}
-                                        </p>
-                                    </div>
+                                    <ChevronRight size={16} className="text-slate-200 group-hover:text-primary transition-colors" />
                                 </div>
                             ))}
                             {recentNotes.length === 0 && (
-                                <p className="text-sm text-center text-muted-foreground py-8">No notes yet.</p>
+                                <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center">
+                                        <FileText size={24} className="text-slate-200" />
+                                    </div>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">No notes found</p>
+                                </div>
                             )}
                         </>
                     )}
@@ -61,3 +99,4 @@ export default function DashboardRecentNotes() {
         </Card>
     );
 }
+
