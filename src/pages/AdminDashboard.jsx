@@ -41,14 +41,10 @@ export default function AdminDashboard() {
 
     const loadData = async () => {
         try {
-            console.log("Loading admin dashboard data...");
             const [statsData, usersData] = await Promise.all([
                 getAdminStats(),
                 getAllUsers()
             ]);
-
-            console.log("Admin Stats:", statsData);
-            console.log("Admin Users:", usersData);
 
             // Calculate stats from users if not provided by backend
             const usersArray = Array.isArray(usersData) ? usersData : [];

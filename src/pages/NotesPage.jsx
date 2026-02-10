@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getNotes, updateNote, deleteNote, getNoteDetail } from "@/api/notes";
+import { getNotes, updateNote, deleteNote, getNoteDetail, createNote } from "@/api/notes";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -12,14 +12,23 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogDescription
+    DialogDescription,
+    DialogFooter
 } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 export default function NotesPage() {
     const [notes, setNotes] = useState([]);
     const [search, setSearch] = useState("");
     const [selectedNote, setSelectedNote] = useState(null);
     const [viewOpen, setViewOpen] = useState(false);
+
+    // Create Note State
+    const [createOpen, setCreateOpen] = useState(false);
+    const [newNoteContent, setNewNoteContent] = useState("");
+    const [isCreating, setIsCreating] = useState(false);
+
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
     useEffect(() => {
@@ -36,6 +45,30 @@ export default function NotesPage() {
             } catch (error) {
                 console.error("Failed to load notes", error);
             }
+        }
+    };
+
+    const handleCreate = async () => {
+        if (!newNoteContent.trim()) {
+            return Swal.fire('Error', 'Content cannot be empty', 'warning');
+        }
+
+        setIsCreating(true);
+        try {
+            await createNote(newNoteContent, "text");
+            Swal.fire({
+                icon: 'success',
+                title: 'Note Created',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            setNewNoteContent("");
+            setCreateOpen(false);
+            loadNotes();
+        } catch (error) {
+            Swal.fire('Error', 'Failed to create note', 'error');
+        } finally {
+            setIsCreating(false);
         }
     };
 
@@ -98,14 +131,19 @@ export default function NotesPage() {
                     <h1 className="text-2xl font-bold">My Notes</h1>
                     <p className="text-muted-foreground">Manage your saved texts and ideas.</p>
                 </div>
-                <div className="relative w-full md:w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                    <Input
-                        placeholder="Search notes..."
-                        className="pl-9 bg-white"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
+                <div className="flex gap-2 w-full md:w-auto">
+                    <div className="relative flex-1 md:w-64">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                        <Input
+                            placeholder="Search notes..."
+                            className="pl-9 bg-white"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
+                    <Button onClick={() => setCreateOpen(true)} className="bg-primary hover:bg-primary/90">
+                        <Plus className="mr-2 h-4 w-4" /> Create
+                    </Button>
                 </div>
             </div>
 
@@ -149,6 +187,36 @@ export default function NotesPage() {
                     </div>
                 )}
             </div>
+
+            {/* Create Note Dialog */}
+            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+                <DialogContent className="max-w-md bg-white">
+                    <DialogHeader>
+                        <DialogTitle>Create New Note</DialogTitle>
+                        <DialogDescription>
+                            Write down your thoughts or ideas.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label>Content</Label>
+                            <Textarea
+                                placeholder="Type your note here..."
+                                className="min-h-[150px]"
+                                value={newNoteContent}
+                                onChange={(e) => setNewNoteContent(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancel</Button>
+                        <Button onClick={handleCreate} disabled={isCreating}>
+                            {isCreating ? "Saving..." : "Save Note"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             <Dialog open={viewOpen} onOpenChange={setViewOpen}>
                 <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-md">
                     <DialogHeader>
@@ -187,7 +255,7 @@ export default function NotesPage() {
                     </div>
                 </DialogContent>
             </Dialog>
-        </div>
+        </div >
     );
 }
 

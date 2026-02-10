@@ -21,37 +21,65 @@ export default function MagicLinkPage() {
 
     const handleLogin = (token) => {
         try {
-            // 1. Store Token
+            // 1. Store and decode token
             localStorage.setItem("token", token);
-
-            // 2. Decode Token to get User Info (Frontend Decode)
-            // This prevents needing an extra API call just for basic info (name/phone)
             const userPayload = parseJwt(token);
 
+            console.log("=== MAGIC LINK DEBUG ===");
+            console.log("JWT Payload:", JSON.stringify(userPayload, null, 2));
+
+            // 2. Extract phone number (multiple possible fields)
+            const phoneNumber = (
+                userPayload.user_phone ||
+                userPayload.phone_number ||
+                userPayload.phone ||
+                userPayload.sub ||
+                ""
+            );
+
+            // 3. Check if admin via whitelist
+            const adminPhonesEnv = import.meta.env.VITE_ADMIN_PHONES || "";
+            const adminPhones = adminPhonesEnv.split(',').map(p => p.trim()).filter(p => p);
+            const isAdmin = adminPhones.includes(phoneNumber);
+
+            console.log("Phone Number:", phoneNumber);
+            console.log("Admin Whitelist:", adminPhones);
+            console.log("Is Admin?", isAdmin);
+
+            // 4. Determine actual role
+            const actualRole = isAdmin ? "admin" : "user";
+
+            // 5. Build user object
             const user = {
                 token: token,
                 name: userPayload.name || userPayload.username || "User",
-                phone_number: userPayload.sub || userPayload.phone_number || "", // 'sub' is often the ID/Phone in JWT
-                role: userPayload.role || "user"
+                phone_number: phoneNumber,
+                role: actualRole
             };
 
+            // 6. Save to localStorage
             localStorage.setItem("user", JSON.stringify(user));
 
-            setStatus("Login success! Redirecting...");
+            console.log("User Object:", JSON.stringify(user, null, 2));
+            console.log("======================");
 
-            // 3. Redirect
+            // 7. Update UI status
+            setStatus(`Login berhasil sebagai ${actualRole}! Redirecting...`);
+
+            // 8. Redirect based on role
             setTimeout(() => {
-                // Check role to direct appropriately
-                if (user.role === 'admin') {
+                if (actualRole === 'admin') {
+                    console.log("✅ ADMIN → Redirecting to /admin");
                     navigate("/admin");
                 } else {
+                    console.log("✅ USER → Redirecting to /dashboard");
                     navigate("/dashboard");
                 }
-            }, 1000);
+            }, 1500);
 
         } catch (error) {
-            console.error("Magic login error:", error);
-            setStatus("Invalid token structure. Please login again.");
+            console.error("❌ Magic login error:", error);
+            setStatus("Token tidak valid. Silakan login kembali.");
             setTimeout(() => navigate("/auth"), 2000);
         }
     };

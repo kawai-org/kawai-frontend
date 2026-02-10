@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
-    MessageCircle,
     FileText,
     Link as LinkIcon,
     Calendar as CalendarIcon,
@@ -36,13 +35,11 @@ export default function DashboardLayout() {
         navigate("/");
     };
 
-    // Navigation items - ALL 6 items should be visible
+    // Navigation items - Chat Assistant removed
     const navItems = [
         { path: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
-        { path: "/chat", label: "Chat Assistant", icon: <MessageCircle size={20} /> },
         { path: "/notes", label: "My Notes", icon: <FileText size={20} /> },
         { path: "/links", label: "Saved Links", icon: <LinkIcon size={20} /> },
-        // IMPORTANT: Reminders and Calendar MUST be visible on desktop
         { path: "/reminders", label: "Reminders", icon: <Bell size={20} /> },
         { path: "/calendar", label: "Calendar", icon: <CalendarIcon size={20} /> },
     ];

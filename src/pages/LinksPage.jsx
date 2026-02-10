@@ -1,15 +1,29 @@
 import { useEffect, useState } from "react";
-import { getLinks, deleteLink } from "@/api/links";
+import { getLinks, deleteLink, createLink } from "@/api/links";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, ExternalLink, Copy, Trash2 } from "lucide-react";
+import { Search, ExternalLink, Copy, Trash2, Plus } from "lucide-react";
 import { format } from "date-fns";
 import Swal from 'sweetalert2';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 export default function LinksPage() {
     const [links, setLinks] = useState([]);
     const [search, setSearch] = useState("");
+
+    // Create Link State
+    const [createOpen, setCreateOpen] = useState(false);
+    const [newLinkUrl, setNewLinkUrl] = useState("");
+    const [isCreating, setIsCreating] = useState(false);
 
     useEffect(() => {
         loadLinks();
@@ -18,11 +32,38 @@ export default function LinksPage() {
     const loadLinks = async () => {
         try {
             const data = await getLinks();
-            console.log("Links loaded:", data);
             setLinks(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Failed to load links", error);
             setLinks([]);
+        }
+    };
+
+    const handleCreate = async () => {
+        if (!newLinkUrl.trim()) {
+            return Swal.fire('Error', 'URL cannot be empty', 'warning');
+        }
+        // Basic URL validation
+        if (!newLinkUrl.startsWith('http')) {
+            return Swal.fire('Error', 'URL must start with http:// or https://', 'warning');
+        }
+
+        setIsCreating(true);
+        try {
+            await createLink(newLinkUrl);
+            Swal.fire({
+                icon: 'success',
+                title: 'Link Saved',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            setNewLinkUrl("");
+            setCreateOpen(false);
+            loadLinks();
+        } catch (error) {
+            Swal.fire('Error', 'Failed to save link', 'error');
+        } finally {
+            setIsCreating(false);
         }
     };
 
@@ -72,14 +113,19 @@ export default function LinksPage() {
                     <h1 className="text-2xl font-bold">Saved Links</h1>
                     <p className="text-muted-foreground">Quick access to your bookmarked URLs.</p>
                 </div>
-                <div className="relative w-full md:w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                    <Input
-                        placeholder="Search links..."
-                        className="pl-9 bg-white"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
+                <div className="flex gap-2 w-full md:w-auto">
+                    <div className="relative flex-1 md:w-64">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                        <Input
+                            placeholder="Search links..."
+                            className="pl-9 bg-white"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
+                    <Button onClick={() => setCreateOpen(true)} className="bg-primary hover:bg-primary/90">
+                        <Plus className="mr-2 h-4 w-4" /> Add Link
+                    </Button>
                 </div>
             </div>
 
@@ -137,7 +183,7 @@ export default function LinksPage() {
                             {filteredLinks.length === 0 && (
                                 <tr>
                                     <td colSpan={3} className="px-6 py-12 text-center text-muted-foreground">
-                                        No links found. Try typing 'Simpan https://example.com' in chat.
+                                        No links found. Add one manually or type 'Simpan https://...' in chat.
                                     </td>
                                 </tr>
                             )}
@@ -145,6 +191,34 @@ export default function LinksPage() {
                     </table>
                 </div>
             </div>
+
+            {/* Create Link Dialog */}
+            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+                <DialogContent className="max-w-md bg-white">
+                    <DialogHeader>
+                        <DialogTitle>Add New Link</DialogTitle>
+                        <DialogDescription>
+                            Paste the URL you want to save.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label>URL</Label>
+                            <Input
+                                placeholder="https://example.com"
+                                value={newLinkUrl}
+                                onChange={(e) => setNewLinkUrl(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancel</Button>
+                        <Button onClick={handleCreate} disabled={isCreating}>
+                            {isCreating ? "Saving..." : "Save Link"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

@@ -1,71 +1,48 @@
 import client from "./client";
 
-// Admin Login - POST /api/admin/login
-export const loginAdmin = async (username, password) => {
-    try {
-        const response = await client.post("/api/admin/login", {
-            username,
-            password
-        });
-        console.log("Admin Login Response:", response.data);
+// Admin authentication is now handled via WhatsApp Magic Link
+// These functions are for admin operations after authentication
 
-        // Response should contain token
-        const data = response.data?.data || response.data;
-        return data;
-    } catch (error) {
-        console.error("Admin login error:", error);
-        throw error;
-    }
-};
 
 // Get admin statistics (total_users, active_today, banned_users)
 // GET /api/admin/stats
 export const getAdminStats = async () => {
-    const response = await client.get("/api/admin/stats");
-    console.log("Admin Stats Response:", response.data);
+    try {
+        const response = await client.get("/api/admin/stats");
+        let stats = response.data;
 
-    // Handle multiple response structures:
-    // Backend returns: { stats: { total_users: X, ... }, status: "success" }
-    let stats = response.data;
+        // Unwrap if needed
+        if (stats.stats && typeof stats.stats === 'object') {
+            stats = stats.stats;
+        } else if (stats.data && typeof stats.data === 'object') {
+            stats = stats.data;
+        }
 
-    // If wrapped in a stats property, unwrap it
-    if (stats.stats && typeof stats.stats === 'object') {
-        stats = stats.stats;
+        return stats;
+    } catch (error) {
+        console.error("Fetch admin stats error:", error.message);
+        return {};
     }
-    // If wrapped in a data property, unwrap it
-    else if (stats.data && typeof stats.data === 'object') {
-        stats = stats.data;
-    }
-
-    console.log("Parsed Stats:", stats);
-    return stats;
 };
 
 // Get all users
 // GET /api/admin/users
 export const getAllUsers = async () => {
-    const response = await client.get("/api/admin/users");
-    console.log("Admin Users Response:", response.data);
+    try {
+        const response = await client.get("/api/admin/users");
+        let data = response.data;
 
-    // Backend returns: { data: Array(5), status: "success" }
-    let data = response.data;
+        if (data.data) {
+            data = data.data;
+        }
 
-    // If wrapped in a data property, unwrap it
-    if (data.data) {
-        data = data.data;
+        let users = data.users || data;
+
+        return Array.isArray(users) ? users : [];
+    } catch (error) {
+        console.error("Fetch users error:", error.message);
+        return [];
     }
-
-    // If users array is nested, extract it
-    let users = data.users || data;
-
-    // Ensure we return an array
-    if (!Array.isArray(users)) {
-        console.warn("Users data is not an array:", users);
-        users = [];
-    }
-
-    console.log("Parsed Users:", users);
-    return users;
 };
 
 // Ban or unban a user

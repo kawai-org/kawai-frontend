@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import AuthPage from './pages/AuthPage';
-import ChatPage from './pages/ChatPage';
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import NotesPage from './pages/NotesPage';
@@ -43,7 +42,6 @@ function App() {
             <Route element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/chat" element={<ChatPage />} />
               <Route path="/notes" element={<NotesPage />} />
               <Route path="/links" element={<LinksPage />} />
               <Route path="/reminders" element={<RemindersPage />} />

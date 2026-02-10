@@ -1,27 +1,19 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Logo from "@/assets/logo.png";
-import { loginAdmin } from "@/api/auth";
 import Swal from 'sweetalert2';
 
 export default function AuthPage() {
-    const [isAdminLogin, setIsAdminLogin] = useState(false);
     const [isRegister, setIsRegister] = useState(false);
-
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
 
     // Register State
     const [regName, setRegName] = useState("");
     const [regPhone, setRegPhone] = useState("");
     const [regPassword, setRegPassword] = useState("");
     const [regSecret, setRegSecret] = useState("");
-
-    const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -48,72 +40,16 @@ export default function AuthPage() {
             Swal.fire({
                 icon: 'success',
                 title: 'Registration Success',
-                text: 'You can now login.',
+                text: 'You can now login via WhatsApp.',
                 timer: 2000
             });
             setIsRegister(false);
-            if (regSecret) setIsAdminLogin(true);
         } catch (error) {
             console.error("Register error", error);
             Swal.fire({
                 icon: 'error',
                 title: 'Registration Failed',
                 text: error.response?.data?.message || "Please check your inputs and try again.",
-            });
-        }
-    };
-
-
-
-    const handleAdminLogin = async (e) => {
-        e.preventDefault();
-
-        // Validation
-        if (!username.trim()) {
-            return Swal.fire({ icon: 'warning', title: 'Missing Username', text: 'Please enter your admin username or phone.' });
-        }
-        if (!password) {
-            return Swal.fire({ icon: 'warning', title: 'Missing Password', text: 'Please enter your password.' });
-        }
-
-        try {
-            const data = await loginAdmin(username, password);
-            console.log("Admin Login Response:", data); // Debugging
-
-            // Robust token extraction: Check root token or data.token
-            const token = data.token || data.data?.token;
-
-            if (!token) {
-                throw new Error("Token not found in login response");
-            }
-
-            // Admin username IS the phone number (e.g., "6285793766959")
-            // Save to localStorage with phone_number field
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify({
-                token,
-                role: 'admin',
-                name: data.name || "Admin",
-                username: username,
-                phone_number: username  // ← FIX: username is phone number!
-            }));
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Welcome back, Admin!',
-                text: 'Redirecting to your dashboard...',
-                timer: 1500,
-                showConfirmButton: false
-            });
-            navigate("/dashboard");
-        } catch (error) {
-            console.error("Login error", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Login Failed',
-                text: error.response?.status === 401 || error.response?.status === 404
-                    ? "Invalid credentials or not an Admin. Did you use the Secret Code?"
-                    : (error.response?.data?.message || "Invalid credentials."),
             });
         }
     };
@@ -149,21 +85,21 @@ export default function AuthPage() {
                             <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" />
                         </div>
                         <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                            {isRegister ? "Create Account" : (isAdminLogin ? "Admin Login" : "Welcome Back")}
+                            {isRegister ? "Create Account" : "Welcome Back"}
                         </h2>
                         <p className="text-muted-foreground">
-                            {isRegister ? "Enter your details below to create your account" : (isAdminLogin ? "Enter your admin credentials" : "Login to access your personalized dashboard")}
+                            {isRegister ? "Enter your details below to create your account" : "Login to access your personalized dashboard"}
                         </p>
                     </div>
 
                     <Card className="border-0 shadow-none bg-transparent">
                         <CardContent className="p-0 space-y-6">
 
-                            {/* User Login Option (WhatsApp Only) */}
-                            {!isAdminLogin && !isRegister && (
+                            {/* Unified Login via WhatsApp */}
+                            {!isRegister && (
                                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                                     <div className="text-center mb-4">
-                                        <h3 className="text-lg font-semibold text-gray-700">User Login</h3>
+                                        <h3 className="text-lg font-semibold text-gray-700">Login</h3>
                                         <p className="text-sm text-muted-foreground">Login via WhatsApp Magic Link</p>
                                     </div>
 
@@ -184,7 +120,7 @@ export default function AuthPage() {
                                                         Swal.fire({
                                                             icon: 'error',
                                                             title: 'Configuration Error',
-                                                            text: 'VITE_BOT_NUMBER is not set in .env.local file! Please contact administrator.'
+                                                            text: 'VITE_BOT_NUMBER is not set in .env file! Please contact administrator.'
                                                         });
                                                     }
                                                 }}
@@ -192,11 +128,14 @@ export default function AuthPage() {
                                                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                                                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                                                 </svg>
-                                                Send Magic Link
+                                                Login via WhatsApp
                                             </a>
                                         </Button>
                                         <p className="text-xs text-muted-foreground">
                                             We will send a login link to your WhatsApp number.
+                                        </p>
+                                        <p className="text-xs text-primary font-medium">
+                                            Your role (User/Admin) will be determined automatically.
                                         </p>
                                     </div>
 
@@ -207,38 +146,8 @@ export default function AuthPage() {
                                                 Sign up
                                             </button>
                                         </p>
-                                        <button
-                                            onClick={() => setIsAdminLogin(true)}
-                                            className="text-muted-foreground hover:text-primary text-xs mt-2"
-                                        >
-                                            Go to Admin Login
-                                        </button>
                                     </div>
                                 </div>
-                            )}
-
-                            {/* Admin Login Form */}
-                            {isAdminLogin && !isRegister && (
-                                <form onSubmit={handleAdminLogin} className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
-                                    {/* Removed redundant header */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="username">Admin Phone Number</Label>
-                                        <Input id="username" placeholder="628..." value={username} onChange={e => setUsername(e.target.value)} className="h-11" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <Label htmlFor="password">Password</Label>
-                                        </div>
-                                        <Input id="password" type="password" placeholder="••••••" value={password} onChange={e => setPassword(e.target.value)} className="h-11" />
-                                    </div>
-                                    <Button type="submit" className="w-full h-11 text-base bg-gradient-to-r from-pink-400 to-purple-600 hover:from-pink-500 hover:to-purple-700 text-white shadow-md transition-all hover:scale-[1.02]">Sign In (Admin)</Button>
-
-                                    <p className="text-center text-sm text-muted-foreground">
-                                        <button type="button" onClick={() => setIsAdminLogin(false)} className="hover:text-primary transition-colors">
-                                            &larr; Back to User Login
-                                        </button>
-                                    </p>
-                                </form>
                             )}
 
                             {/* Register Form */}
