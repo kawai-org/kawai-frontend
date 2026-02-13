@@ -1,29 +1,17 @@
 import { useEffect, useState } from "react";
-import { getLinks, deleteLink, createLink } from "@/api/links";
+import { getLinks, deleteLink } from "@/api/links";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, ExternalLink, Copy, Trash2, Plus, Globe, Check, Link as LinkIcon } from "lucide-react";
+import { Search, ExternalLink, Copy, Trash2, Globe, Check, Link as LinkIcon } from "lucide-react";
 import { format } from "date-fns";
 import Swal from 'sweetalert2';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter
-} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 
 export default function LinksPage() {
     const [links, setLinks] = useState([]);
     const [search, setSearch] = useState("");
 
-    // Create Link State
-    const [createOpen, setCreateOpen] = useState(false);
-    const [newLinkUrl, setNewLinkUrl] = useState("");
-    const [isCreating, setIsCreating] = useState(false);
     const [copiedId, setCopiedId] = useState(null);
 
     useEffect(() => {
@@ -40,50 +28,6 @@ export default function LinksPage() {
         }
     };
 
-    const handleCreate = async () => {
-        if (!newLinkUrl.trim()) {
-            return Swal.fire({
-                title: 'URL Empty',
-                text: 'Please paste a valid link.',
-                icon: 'warning',
-                customClass: { popup: 'rounded-[1.5rem]' }
-            });
-        }
-
-        if (!newLinkUrl.startsWith('http')) {
-            return Swal.fire({
-                title: 'Invalid Link',
-                text: 'URL must start with http:// or https://',
-                icon: 'error',
-                customClass: { popup: 'rounded-[1.5rem]' }
-            });
-        }
-
-        setIsCreating(true);
-        try {
-            await createLink(newLinkUrl);
-            Swal.fire({
-                icon: 'success',
-                title: 'Library Updated',
-                text: 'The link has been saved to your collection.',
-                showConfirmButton: false,
-                timer: 1500,
-                customClass: { popup: 'rounded-[1.5rem]' }
-            });
-            setNewLinkUrl("");
-            setCreateOpen(false);
-            loadLinks();
-        } catch (error) {
-            Swal.fire({
-                title: 'Error',
-                text: 'Failed to save link',
-                icon: 'error',
-                customClass: { popup: 'rounded-[1.5rem]' }
-            });
-        } finally {
-            setIsCreating(false);
-        }
-    };
 
     const handleCopy = (id, text) => {
         navigator.clipboard.writeText(text);
@@ -181,12 +125,6 @@ export default function LinksPage() {
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
-                    <Button
-                        onClick={() => setCreateOpen(true)}
-                        className="h-11 px-6 rounded-2xl bg-primary hover:bg-primary/90 font-bold uppercase text-[10px] tracking-widest shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]"
-                    >
-                        <Plus className="mr-2 h-4 w-4 stroke-[3]" /> Add New Link
-                    </Button>
                 </div>
             </div>
 
@@ -263,7 +201,7 @@ export default function LinksPage() {
                                             </div>
                                             <div className="text-center">
                                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Library Empty</p>
-                                                <p className="text-slate-300 text-xs font-medium">Add links manually or use the WhatsApp assistant.</p>
+                                                <p className="text-slate-300 text-xs font-medium">Use the WhatsApp assistant to save new links.</p>
                                             </div>
                                         </div>
                                     </td>
@@ -274,40 +212,6 @@ export default function LinksPage() {
                 </div>
             </div>
 
-            {/* Create Link Dialog */}
-            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                <DialogContent className="max-w-md bg-white border-0 rounded-[2.5rem] shadow-2xl p-0 overflow-hidden outline-none">
-                    <DialogHeader className="p-8 pb-4">
-                        <DialogTitle className="text-xl font-black uppercase tracking-tight font-heading">Secure Resource</DialogTitle>
-                        <DialogDescription className="text-slate-400 text-xs font-semibold">
-                            Enter the destination URL to store it in your cloud library.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="p-8 pt-0 space-y-8">
-                        <div className="space-y-3">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Target Destination (URL)</Label>
-                            <Input
-                                placeholder="https://cloud.hub.com/resource"
-                                className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all px-5 font-bold text-slate-900 shadow-none focus-visible:ring-primary/20"
-                                value={newLinkUrl}
-                                onChange={(e) => setNewLinkUrl(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex gap-4">
-                            <Button variant="outline" className="flex-1 h-12 rounded-2xl border-slate-100 font-bold uppercase text-[10px] tracking-widest" onClick={() => setCreateOpen(false)}>
-                                Abort
-                            </Button>
-                            <Button
-                                onClick={handleCreate}
-                                disabled={isCreating}
-                                className="flex-1 h-12 rounded-2xl bg-primary hover:bg-primary/90 font-bold uppercase text-[10px] tracking-widest"
-                            >
-                                {isCreating ? "Processing..." : "Archive Link"}
-                            </Button>
-                        </div>
-                    </div>
-                </DialogContent>
-            </Dialog>
         </div>
     );
 }

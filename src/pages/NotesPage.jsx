@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { getNotes, updateNote, deleteNote, getNoteDetail, createNote } from "@/api/notes";
+import { getNotes, updateNote, deleteNote, getNoteDetail } from "@/api/notes";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, Plus, Edit2, Trash2, Calendar, Eye, Clock, FileText, X } from "lucide-react";
+import { Search, Edit2, Trash2, Calendar, Eye, Clock, FileText, X } from "lucide-react";
 import { format } from "date-fns";
 import Swal from 'sweetalert2';
 import {
@@ -24,10 +24,6 @@ export default function NotesPage() {
     const [selectedNote, setSelectedNote] = useState(null);
     const [viewOpen, setViewOpen] = useState(false);
 
-    // Create Note State
-    const [createOpen, setCreateOpen] = useState(false);
-    const [newNoteContent, setNewNoteContent] = useState("");
-    const [isCreating, setIsCreating] = useState(false);
 
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -46,40 +42,6 @@ export default function NotesPage() {
         }
     };
 
-    const handleCreate = async () => {
-        if (!newNoteContent.trim()) {
-            return Swal.fire({
-                title: 'Note Content Empty',
-                text: 'Please write something before saving.',
-                icon: 'warning',
-                customClass: { popup: 'rounded-[1.5rem]' }
-            });
-        }
-
-        setIsCreating(true);
-        try {
-            await createNote(newNoteContent, "text");
-            Swal.fire({
-                icon: 'success',
-                title: 'Note Created',
-                showConfirmButton: false,
-                timer: 1500,
-                customClass: { popup: 'rounded-[1.5rem]' }
-            });
-            setNewNoteContent("");
-            setCreateOpen(false);
-            loadNotes();
-        } catch (error) {
-            Swal.fire({
-                title: 'Error',
-                text: 'Failed to create note',
-                icon: 'error',
-                customClass: { popup: 'rounded-[1.5rem]' }
-            });
-        } finally {
-            setIsCreating(false);
-        }
-    };
 
     const handleView = async (note) => {
         try {
@@ -184,12 +146,6 @@ export default function NotesPage() {
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
-                    <Button
-                        onClick={() => setCreateOpen(true)}
-                        className="h-11 px-6 rounded-2xl bg-primary hover:bg-primary/90 font-bold uppercase text-[10px] tracking-widest shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]"
-                    >
-                        <Plus className="mr-2 h-4 w-4 stroke-[3]" /> Create New Note
-                    </Button>
                 </div>
             </div>
 
@@ -230,46 +186,12 @@ export default function NotesPage() {
                         </div>
                         <div className="text-center">
                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">No matching notes found</p>
-                            <p className="text-slate-300 text-xs font-medium">Try a different search term or create a new note.</p>
+                            <p className="text-slate-300 text-xs font-medium">Try a different search term or add notes via WhatsApp.</p>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* Create Note Dialog */}
-            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                <DialogContent className="max-w-md bg-white border-0 rounded-[2.5rem] shadow-2xl p-0 overflow-hidden">
-                    <DialogHeader className="p-8 pb-4">
-                        <DialogTitle className="text-xl font-black uppercase tracking-tight font-heading">Capture Thought</DialogTitle>
-                        <DialogDescription className="text-slate-400 text-xs font-semibold">
-                            Saving your ideas to your private collection.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="p-8 pt-0 space-y-6">
-                        <div className="space-y-3">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Note Content</Label>
-                            <Textarea
-                                placeholder="Write what's on your mind..."
-                                className="min-h-[180px] rounded-3xl border-slate-100 bg-slate-50/50 focus:bg-white transition-all p-5 font-bold text-slate-900 shadow-none focus-visible:ring-primary/20"
-                                value={newNoteContent}
-                                onChange={(e) => setNewNoteContent(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex gap-4">
-                            <Button variant="outline" className="flex-1 h-12 rounded-2xl border-slate-100 font-bold uppercase text-[10px] tracking-widest" onClick={() => setCreateOpen(false)}>
-                                Discard
-                            </Button>
-                            <Button
-                                onClick={handleCreate}
-                                disabled={isCreating}
-                                className="flex-1 h-12 rounded-2xl bg-primary hover:bg-primary/90 font-bold uppercase text-[10px] tracking-widest"
-                            >
-                                {isCreating ? "Saving..." : "Save Note"}
-                            </Button>
-                        </div>
-                    </div>
-                </DialogContent>
-            </Dialog>
 
             {/* View Note Dialog */}
             <Dialog open={viewOpen} onOpenChange={setViewOpen}>

@@ -11,79 +11,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Shield, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { loginAdmin, registerUser } from '@/api/auth';
+import { registerUser } from '@/api/auth';
 
 export default function LoginModal({ children, open, onOpenChange }) {
     const navigate = useNavigate();
     const [mode, setMode] = useState('user'); // 'user' | 'admin' | 'register'
 
-    // Admin Login State
-    const [adminPhone, setAdminPhone] = useState("");
-    const [adminPassword, setAdminPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
 
     // Register State
     const [regName, setRegName] = useState("");
     const [regPhone, setRegPhone] = useState("");
     const [regPassword, setRegPassword] = useState("");
-    const [regSecret, setRegSecret] = useState("");
 
-    const handleAdminLogin = async (e) => {
-        e.preventDefault();
-
-        if (!adminPhone.trim()) {
-            return Swal.fire({ icon: 'warning', title: 'Input Required', text: 'Please enter your phone number.' });
-        }
-        if (!adminPassword) {
-            return Swal.fire({ icon: 'warning', title: 'Input Required', text: 'Please enter your password.' });
-        }
-
-        setIsLoading(true);
-        try {
-            const response = await loginAdmin(adminPhone, adminPassword);
-
-            if (response.status === 'success') {
-                // Save token and user info
-                localStorage.setItem('token', response.token);
-                localStorage.setItem('user', JSON.stringify({
-                    token: response.token,
-                    role: 'admin',
-                    phone_number: adminPhone
-                }));
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Login Berhasil!',
-                    text: 'Selamat datang, Admin!',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-
-                // Close modal and redirect
-                onOpenChange?.(false);
-                setTimeout(() => {
-                    navigate('/admin');
-                }, 1500);
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Login Gagal',
-                    text: response.msg || 'Terjadi kesalahan'
-                });
-            }
-        } catch (error) {
-            console.error("Admin login error:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Login Gagal',
-                text: error.response?.data?.msg || 'Phone number atau password salah'
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -103,8 +44,7 @@ export default function LoginModal({ children, open, onOpenChange }) {
             const response = await registerUser({
                 name: regName,
                 phone_number: regPhone,
-                password: regPassword,
-                secret_code: regSecret
+                password: regPassword
             });
 
             console.log("Register response:", response);
@@ -120,7 +60,7 @@ export default function LoginModal({ children, open, onOpenChange }) {
             setRegName("");
             setRegPhone("");
             setRegPassword("");
-            setRegSecret("");
+            setRegPassword("");
         } catch (error) {
             console.error("Register error:", error);
             Swal.fire({
@@ -133,12 +73,7 @@ export default function LoginModal({ children, open, onOpenChange }) {
 
     const resetForm = () => {
         setMode('user');
-        setAdminPhone("");
-        setAdminPassword("");
-        setRegName("");
-        setRegPhone("");
         setRegPassword("");
-        setRegSecret("");
     };
 
     return (
@@ -154,46 +89,18 @@ export default function LoginModal({ children, open, onOpenChange }) {
                 <div className="bg-gradient-to-r from-pink-400 to-purple-600 p-6 rounded-t-2xl">
                     <DialogHeader className="text-white">
                         <DialogTitle className="text-2xl font-bold">
-                            {mode === 'register' ? "Create Account" :
-                                mode === 'admin' ? "Admin Login" : "Welcome Back"}
+                            {mode === 'register' ? "Create Account" : "Welcome Back"}
                         </DialogTitle>
                         <DialogDescription className="text-white/80">
                             {mode === 'register'
                                 ? "Enter your details below to create your account"
-                                : mode === 'admin'
-                                    ? "Login with your admin credentials"
-                                    : "Login to access your personalized dashboard"
+                                : "Login to access your personalized dashboard"
                             }
                         </DialogDescription>
                     </DialogHeader>
                 </div>
 
                 <div className="p-6 space-y-6">
-                    {/* Tab Toggle (User / Admin) - Only show when not registering */}
-                    {mode !== 'register' && (
-                        <div className="flex bg-gray-100 rounded-xl p-1 gap-1">
-                            <button
-                                onClick={() => setMode('user')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${mode === 'user'
-                                    ? 'bg-white text-primary shadow-sm'
-                                    : 'text-gray-500 hover:text-gray-700'
-                                    }`}
-                            >
-                                <User className="w-4 h-4" />
-                                User
-                            </button>
-                            <button
-                                onClick={() => setMode('admin')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${mode === 'admin'
-                                    ? 'bg-white text-primary shadow-sm'
-                                    : 'text-gray-500 hover:text-gray-700'
-                                    }`}
-                            >
-                                <Shield className="w-4 h-4" />
-                                Admin
-                            </button>
-                        </div>
-                    )}
 
                     {/* User Login via WhatsApp */}
                     {mode === 'user' && (
@@ -247,42 +154,6 @@ export default function LoginModal({ children, open, onOpenChange }) {
                         </div>
                     )}
 
-                    {/* Admin Login Form */}
-                    {mode === 'admin' && (
-                        <form onSubmit={handleAdminLogin} className="space-y-4 animate-in fade-in duration-300">
-                            <div className="space-y-2">
-                                <Label>Phone Number</Label>
-                                <Input
-                                    placeholder="628xxxxxxxxxx"
-                                    value={adminPhone}
-                                    onChange={e => setAdminPhone(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Password</Label>
-                                <Input
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    value={adminPassword}
-                                    onChange={e => setAdminPassword(e.target.value)}
-                                    required
-                                />
-                            </div>
-
-                            <Button
-                                type="submit"
-                                disabled={isLoading}
-                                className="w-full h-11 text-base bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-md transition-all hover:scale-[1.02]"
-                            >
-                                {isLoading ? "Logging in..." : "Login sebagai Admin"}
-                            </Button>
-
-                            <p className="text-center text-xs text-muted-foreground pt-2">
-                                Only registered admins can login here
-                            </p>
-                        </form>
-                    )}
 
                     {/* Register Form */}
                     {mode === 'register' && (
@@ -300,10 +171,6 @@ export default function LoginModal({ children, open, onOpenChange }) {
                             <div className="space-y-2">
                                 <Label>Password</Label>
                                 <Input type="password" placeholder="Create password" value={regPassword} onChange={e => setRegPassword(e.target.value)} required />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Secret Code (Optional)</Label>
-                                <Input type="password" placeholder="For Admins only" value={regSecret} onChange={e => setRegSecret(e.target.value)} />
                             </div>
 
                             <Button type="submit" className="w-full h-11 text-base bg-gradient-to-r from-pink-400 to-purple-600 hover:from-pink-500 hover:to-purple-700 text-white shadow-md transition-all hover:scale-[1.02]">

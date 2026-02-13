@@ -277,7 +277,7 @@ export default function LandingPage() {
                                     onClick={handleStart}
                                     variant="outline"
                                     size="lg"
-                                    className="h-16 px-12 text-xl font-bold rounded-2xl border-white/20 text-white hover:bg-white/10 transition-all font-heading"
+                                    className="h-16 px-12 text-xl font-bold rounded-2xl bg-white text-slate-900 hover:bg-white/90 shadow-2xl transition-all hover:scale-105 active:scale-95"
                                 >
                                     View Dashboard
                                 </Button>

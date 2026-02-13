@@ -1,16 +1,7 @@
-import { MessageSquare, Zap, Target, Star } from "lucide-react";
-import AdminDashboard from "./AdminDashboard";
-import DashboardStats from "@/components/dashboard/DashboardStats";
-import DashboardActivity from "@/components/dashboard/DashboardActivity";
-import DashboardRecentNotes from "@/components/dashboard/DashboardRecentNotes";
-
 export default function DashboardPage() {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-    // If Admin, render Admin Dashboard
-    if (user.role === 'admin') {
-        return <AdminDashboard />;
-    }
+    // Admin Dashboard Removed - Always render User Dashboard behavior
 
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
@@ -27,6 +18,9 @@ export default function DashboardPage() {
                             <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase font-heading">
                                 Welcome Back, <span className="text-gradient">{user.name?.split(' ')[0]}</span>! 👋
                             </h1>
+                            <div className="flex items-center gap-2 text-slate-400 font-medium text-sm md:text-base">
+                                <span className="bg-white/10 px-2 py-0.5 rounded text-white/80">{user.phone_number || "No Phone"}</span>
+                            </div>
                             <p className="text-slate-400 font-medium text-lg max-w-xl leading-relaxed">
                                 Your smart assistant has been busy. Here's a quick overview of your digital life today.
                             </p>

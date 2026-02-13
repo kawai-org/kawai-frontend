@@ -55,17 +55,3 @@ export const deleteLink = async (id) => {
     }
 };
 
-export const createLink = async (url) => {
-    try {
-        // Create a note with type 'mixed' containing the URL
-        // Simple content: just the URL. User can edit later if needed.
-        const response = await client.post("/api/notes", {
-            content: url,
-            type: "mixed"
-        });
-        return response.data;
-    } catch (error) {
-        console.error("Error creating link:", error);
-        throw error;
-    }
-};

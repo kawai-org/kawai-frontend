@@ -24,7 +24,6 @@ export default function AuthPage() {
     const [regName, setRegName] = useState("");
     const [regPhone, setRegPhone] = useState("");
     const [regPassword, setRegPassword] = useState("");
-    const [regSecret, setRegSecret] = useState("");
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -45,7 +44,6 @@ export default function AuthPage() {
                 name: regName,
                 phone_number: regPhone,
                 password: regPassword,
-                secret_code: regSecret
             }));
 
             Swal.fire({
@@ -251,22 +249,6 @@ export default function AuthPage() {
                                                     value={regPassword}
                                                     onChange={e => setRegPassword(e.target.value)}
                                                     required
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1 flex justify-between">
-                                                Admin Code
-                                                <span className="text-[10px] text-slate-300 lowercase font-medium">Optional</span>
-                                            </Label>
-                                            <div className="relative group">
-                                                <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
-                                                <Input
-                                                    type="password"
-                                                    placeholder="Admin secret"
-                                                    className="h-12 pl-11 rounded-xl border-slate-100 bg-slate-50 focus:bg-white transition-all shadow-sm"
-                                                    value={regSecret}
-                                                    onChange={e => setRegSecret(e.target.value)}
                                                 />
                                             </div>
                                         </div>

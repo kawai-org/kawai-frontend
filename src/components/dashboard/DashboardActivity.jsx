@@ -29,49 +29,51 @@ export default function DashboardActivity() {
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="px-4 md:px-6 pb-8 h-[300px] md:h-[360px]">
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={activityData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#f1f5f9" />
-                        <XAxis
-                            dataKey="name"
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
-                            dy={15}
-                        />
-                        <YAxis
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
-                        />
-                        <Tooltip
-                            cursor={{ fill: '#f8fafc', radius: 10 }}
-                            contentStyle={{
-                                borderRadius: '16px',
-                                border: '1px solid #f1f5f9',
-                                boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)',
-                                padding: '12px'
-                            }}
-                            itemStyle={{ fontSize: '12px', fontWeight: '800', textTransform: 'uppercase', color: '#0f172a' }}
-                            labelStyle={{ fontSize: '10px', fontWeight: '900', color: '#94a3b8', marginBottom: '4px', textTransform: 'uppercase' }}
-                        />
-                        <Bar
-                            dataKey="count"
-                            radius={[8, 8, 8, 8]}
-                            barSize={32}
-                            animationDuration={1500}
-                        >
-                            {activityData.map((entry, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={entry.count > 10 ? 'hsl(var(--primary))' : '#e2e8f0'}
-                                    className="transition-all duration-500 hover:opacity-80"
-                                />
-                            ))}
-                        </Bar>
-                    </BarChart>
-                </ResponsiveContainer>
+            <CardContent className="px-4 md:px-6 pb-8">
+                <div className="h-[300px] md:h-[360px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={activityData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#f1f5f9" />
+                            <XAxis
+                                dataKey="name"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
+                                dy={15}
+                            />
+                            <YAxis
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
+                            />
+                            <Tooltip
+                                cursor={{ fill: '#f8fafc', radius: 10 }}
+                                contentStyle={{
+                                    borderRadius: '16px',
+                                    border: '1px solid #f1f5f9',
+                                    boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)',
+                                    padding: '12px'
+                                }}
+                                itemStyle={{ fontSize: '12px', fontWeight: '800', textTransform: 'uppercase', color: '#0f172a' }}
+                                labelStyle={{ fontSize: '10px', fontWeight: '900', color: '#94a3b8', marginBottom: '4px', textTransform: 'uppercase' }}
+                            />
+                            <Bar
+                                dataKey="count"
+                                radius={[8, 8, 8, 8]}
+                                barSize={32}
+                                animationDuration={1500}
+                            >
+                                {activityData.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={entry.count > 10 ? 'hsl(var(--primary))' : '#e2e8f0'}
+                                        className="transition-all duration-500 hover:opacity-80"
+                                    />
+                                ))}
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
             </CardContent>
         </Card>
     );

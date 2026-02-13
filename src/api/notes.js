@@ -25,15 +25,6 @@ export const getNotes = async (search = "") => {
     }
 };
 
-export const createNote = async (content, type = "text") => {
-    try {
-        const response = await client.post("/api/notes", { content, type });
-        return response.data;
-    } catch (error) {
-        console.error("Create note error:", error);
-        throw error;
-    }
-};
 
 export const updateNote = async (id, content) => {
     try {

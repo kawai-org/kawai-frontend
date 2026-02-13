@@ -9,7 +9,6 @@ import LinksPage from './pages/LinksPage';
 import CalendarPage from './pages/CalendarPage';
 import FaqPage from './pages/FaqPage';
 import NotFoundPage from './pages/NotFoundPage';
-import AdminDashboard from './pages/AdminDashboard';
 import TestDataPage from './pages/TestDataPage';
 import DashboardLayout from './layout/DashboardLayout';
 import PrivateRoute from './components/PrivateRoute';
@@ -41,7 +40,6 @@ function App() {
             {/* Protected Dashboard Routes */}
             <Route element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
               <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/notes" element={<NotesPage />} />
               <Route path="/links" element={<LinksPage />} />
               <Route path="/reminders" element={<RemindersPage />} />
