@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
     Dialog,
     DialogTrigger,
@@ -10,13 +8,7 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog";
-import {
-    User,
-    Phone,
-    MessageCircle,
-    Key,
-    ArrowLeft,
-} from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 export default function LoginModal({ open, onOpenChange, children }) {
@@ -94,63 +86,46 @@ export default function LoginModal({ open, onOpenChange, children }) {
                 <div className="p-8 space-y-6">
                     <DialogHeader className="space-y-3">
                         <DialogTitle className="text-3xl font-black tracking-tight text-slate-900 uppercase font-heading text-center">
-                            {isRegister ? "Daftar Akun" : "Masuk"}
+                            Masuk
                         </DialogTitle>
                         <DialogDescription className="text-slate-400 font-medium text-center">
-                            {isRegister
-                                ? "Buat akun baru untuk mulai menggunakan Kawai-chan."
-                                : "Login ke dashboard melalui WhatsApp."}
+                            Login ke dashboard melalui WhatsApp.
                         </DialogDescription>
                     </DialogHeader>
 
                     {/* Login View */}
-                    {!isRegister && (
-                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                            <div className="relative group/btn">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-[#25D366] to-[#128C7E] rounded-2xl blur opacity-20 group-hover/btn:opacity-40 transition duration-500" />
-                                <Button
-                                    asChild
-                                    className="w-full h-14 text-lg bg-[#25D366] hover:bg-[#128C7E] text-white font-black rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] border-0 relative"
-                                >
-                                    <a
-                                        href={`https://wa.me/${import.meta.env.VITE_BOT_NUMBER}?text=Dashboard`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="flex items-center justify-center gap-3"
-                                        onClick={(e) => {
-                                            if (!import.meta.env.VITE_BOT_NUMBER) {
-                                                e.preventDefault();
-                                                Swal.fire({
-                                                    icon: 'error',
-                                                    title: 'Ops!',
-                                                    text: 'Konfigurasi WhatsApp bot belum diatur. Hubungi support.'
-                                                });
-                                            }
-                                        }}
-                                    >
-                                        <MessageCircle className="w-6 h-6 fill-white/20" />
-                                        LOGIN VIA WA
-                                    </a>
-                                </Button>
-                            </div>
-
-                            <div className="relative flex items-center py-1">
-                                <div className="flex-grow border-t border-slate-100"></div>
-                                <span className="flex-shrink mx-4 text-slate-300 text-xs font-black uppercase tracking-widest">Belum punya akun?</span>
-                                <div className="flex-grow border-t border-slate-100"></div>
-                            </div>
-
+                    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                        <div className="relative group/btn">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-[#25D366] to-[#128C7E] rounded-2xl blur opacity-20 group-hover/btn:opacity-40 transition duration-500" />
                             <Button
-                                variant="outline"
-                                onClick={() => setIsRegister(true)}
-                                className="w-full h-12 rounded-2xl border-slate-100 text-slate-600 font-bold hover:bg-slate-50 hover:text-primary hover:border-primary/20 transition-all border-2"
+                                asChild
+                                className="w-full h-14 text-lg bg-[#25D366] hover:bg-[#128C7E] text-white font-black rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] border-0 relative"
                             >
-                                BUAT AKUN BARU
+                                <a
+                                    href={`https://wa.me/${import.meta.env.VITE_BOT_NUMBER}?text=Dashboard`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="flex items-center justify-center gap-3"
+                                    onClick={(e) => {
+                                        if (!import.meta.env.VITE_BOT_NUMBER) {
+                                            e.preventDefault();
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Ops!',
+                                                text: 'Konfigurasi WhatsApp bot belum diatur. Hubungi support.'
+                                            });
+                                        }
+                                    }}
+                                >
+                                    <MessageCircle className="w-6 h-6 fill-white/20" />
+                                    LOGIN VIA WA
+                                </a>
                             </Button>
                         </div>
-                    )}
+                    </div>
 
-                    {/* Register View */}
+                    {/* Register View - Hidden */}
+                    {/*
                     {isRegister && (
                         <form onSubmit={handleRegister} className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
                             <button
@@ -212,6 +187,7 @@ export default function LoginModal({ open, onOpenChange, children }) {
                             </Button>
                         </form>
                     )}
+                    */}
                 </div>
             </DialogContent>
         </Dialog>
