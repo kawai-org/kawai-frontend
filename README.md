@@ -270,7 +270,7 @@ vercel
 
 ## 🔗 Repository Terkait
 
-- **Backend:** [kawai-backend](link-ke-repo-backend) - API dan WhatsApp Bot handler
+- **Backend:** [kawai-backend](https://github.com/kawai-org/kawai-backend) - API dan WhatsApp Bot handler
 
 ## 🤝 Contributing
 
