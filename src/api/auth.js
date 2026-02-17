@@ -1,6 +1,7 @@
 import client from "./client";
 
 // Register new user
+// Register new user
 export const registerUser = async (userData) => {
     try {
         const response = await client.post("/api/register", {
@@ -16,26 +17,6 @@ export const registerUser = async (userData) => {
         if (error.response) {
             throw {
                 message: error.response.data?.msg || error.response.data?.message || "Registration failed",
-                status: error.response.status
-            };
-        }
-        throw { message: "Network error. Please check your connection." };
-    }
-};
-
-// Admin login with phone number and password
-export const loginAdmin = async (username, password) => {
-    try {
-        const response = await client.post("/api/admin/login", {
-            username,
-            password
-        });
-        return response.data;
-    } catch (error) {
-        console.error("Admin Login API Error:", error);
-        if (error.response) {
-            throw {
-                message: error.response.data?.msg || error.response.data?.message || "Login failed",
                 status: error.response.status
             };
         }

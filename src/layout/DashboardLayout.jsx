@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import LoadingScreen from '@/components/common/LoadingScreen';
+import { useAuth } from '@/hooks/useAuth';
 import {
     LayoutDashboard,
     FileText,
@@ -29,64 +29,33 @@ import {
 
 export default function DashboardLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [isChecking, setIsChecking] = useState(true);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState(null);
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Auth check - redirect if not logged in
-    useEffect(() => {
-        const checkAuth = () => {
-            try {
-                const userStr = localStorage.getItem("user");
-                if (userStr) {
-                    const parsedUser = JSON.parse(userStr);
-                    if (parsedUser && parsedUser.email) {
-                        setUser(parsedUser);
-                        setIsAuthenticated(true);
-                    } else {
-                        setIsAuthenticated(false);
-                        navigate('/auth', { replace: true });
-                    }
-                } else {
-                    setIsAuthenticated(false);
-                    navigate('/auth', { replace: true });
-                }
-            } catch (error) {
-                console.error("Auth check failed:", error);
-                setIsAuthenticated(false);
-                navigate('/auth', { replace: true });
-            } finally {
-                setIsChecking(false);
-            }
-        };
-
-        checkAuth();
-    }, [navigate]);
-
-    // Show loading while checking auth
-    if (isChecking) {
-        return <LoadingScreen />;
-    }
-
-    // Don't render if not authenticated (already redirecting)
-    if (!isAuthenticated || !user) {
-        return null;
-    }
-
     const handleLogout = () => {
-        localStorage.removeItem("user");
+        logout();
         navigate("/");
     };
 
     const navItems = [
-        { path: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
+        { path: "/dashboard-user", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
         { path: "/notes", label: "My Notes", icon: <FileText size={20} /> },
         { path: "/links", label: "Saved Links", icon: <LinkIcon size={20} /> },
         { path: "/reminders", label: "Reminders", icon: <Bell size={20} /> },
         { path: "/calendar", label: "Calendar", icon: <CalendarIcon size={20} /> },
     ];
+
+    // Get user initials for avatar fallback
+    const getUserInitials = () => {
+        if (!user?.name) return "KW";
+        return user.name
+            .split(' ')
+            .map(n => n[0])
+            .join('')
+            .slice(0, 2)
+            .toUpperCase();
+    };
 
     return (
         <div className="min-h-screen bg-slate-50/50 flex font-sans text-slate-900">
@@ -220,13 +189,13 @@ export default function DashboardLayout({ children }) {
                             <DropdownMenuTrigger asChild>
                                 <div className="flex items-center gap-3 cursor-pointer p-1 rounded-2xl md:pl-3 hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100 group">
                                     <div className="hidden md:block text-right">
-                                        <p className="text-xs font-black uppercase tracking-tight text-slate-900">{user.name || "Kawai User"}</p>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{user.role || 'Member'}</p>
+                                        <p className="text-xs font-black uppercase tracking-tight text-slate-900">{user?.name || "Kawai User"}</p>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{user?.role || 'Member'}</p>
                                     </div>
                                     <div className="relative">
                                         <Avatar className="h-10 w-10 border-2 border-white shadow-lg ring-1 ring-slate-100">
                                             <AvatarFallback className="bg-gradient-to-br from-primary to-purple-500 text-white font-black text-xs">
-                                                {user.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || "KW"}
+                                                {getUserInitials()}
                                             </AvatarFallback>
                                         </Avatar>
                                         <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />
@@ -236,8 +205,8 @@ export default function DashboardLayout({ children }) {
                             <DropdownMenuContent align="end" className="w-64 p-2 rounded-2xl border-slate-100 shadow-3xl">
                                 <DropdownMenuLabel className="px-3 py-2">
                                     <div className="flex flex-col space-y-1">
-                                        <p className="text-sm font-black uppercase tracking-tight">{user.name}</p>
-                                        <p className="text-xs text-slate-400 font-medium">{user.phone_number}</p>
+                                        <p className="text-sm font-black uppercase tracking-tight">{user?.name || "User"}</p>
+                                        <p className="text-xs text-slate-400 font-medium">{user?.phone_number || "No Phone"}</p>
                                     </div>
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator className="mx-2 bg-slate-50" />
@@ -269,4 +238,3 @@ export default function DashboardLayout({ children }) {
         </div>
     );
 }
-

@@ -1,42 +1,50 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent } from "@/components/ui/card";
 import {
     Loader2,
-    ShieldCheck,
     UserCheck,
     LayoutDashboard,
     XCircle,
     CheckCircle2
 } from "lucide-react";
 
+// Helper to decode JWT payload safely - defined outside component
+const parseJwt = (token) => {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch {
+        return null;
+    }
+};
+
 export default function MagicLinkPage() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [status, setStatus] = useState("Initializing verification...");
     const [stage, setStage] = useState(1); // 1: Verify, 2: Auth, 3: Redirect
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const token = searchParams.get("token");
+    const hasProcessed = useRef(false);
 
-        if (token) {
-            handleLogin(token);
-        } else {
-            setError("No magic token found in the link.");
-            setStatus("Redirecting to login...");
-            setTimeout(() => navigate("/auth"), 2500);
-        }
-    }, [searchParams, navigate]);
-
-    const handleLogin = (token) => {
+    const handleLogin = useCallback((token) => {
         try {
             setStage(1);
             setStatus("Verifying magic link...");
 
-            // 1. Store and decode token
-            localStorage.setItem("token", token);
+            // 1. Decode token
             const userPayload = parseJwt(token);
+
+            if (!userPayload) {
+                throw new Error("Invalid token format");
+            }
 
             // 2. Extract phone number (multiple possible fields)
             const phoneNumber = (
@@ -47,24 +55,19 @@ export default function MagicLinkPage() {
                 ""
             );
 
-            // 3. Check if admin via whitelist
-            const adminPhonesEnv = import.meta.env.VITE_ADMIN_PHONES || "";
-            const adminPhones = adminPhonesEnv.split(',').map(p => p.trim()).filter(p => p);
-            const isAdmin = adminPhones.includes(phoneNumber);
+            if (!phoneNumber) {
+                throw new Error("Invalid user data in token");
+            }
 
-            // 4. Determine actual role
-            const actualRole = isAdmin ? "admin" : "user";
-
-            // 5. Build user object
+            // 3. Build user object (Frontend ini hanya untuk user, tidak ada admin)
             const user = {
-                token: token,
                 name: userPayload.name || userPayload.username || "User",
                 phone_number: phoneNumber,
-                role: actualRole
+                role: userPayload.role || "user"
             };
 
-            // 6. Save to localStorage
-            localStorage.setItem("user", JSON.stringify(user));
+            // 4. Use auth context to login (saves to localStorage and updates state)
+            login(user, token);
 
             // Transition to Authenticated stage
             setTimeout(() => {
@@ -74,39 +77,35 @@ export default function MagicLinkPage() {
                 // Transition to Redirect stage
                 setTimeout(() => {
                     setStage(3);
-                    setStatus(`Loading ${actualRole === 'admin' ? 'Admin Panel' : 'Dashboard'}...`);
+                    setStatus("Loading Dashboard...");
 
+                    // Navigate to dashboard immediately
                     setTimeout(() => {
-                        if (actualRole === 'admin') {
-                            navigate("/admin");
-                        } else {
-                            navigate("/dashboard");
-                        }
-                    }, 1500);
-                }, 1000);
-            }, 1000);
+                        navigate("/dashboard-user", { replace: true });
+                    }, 1000);
+                }, 800);
+            }, 800);
 
-        } catch (error) {
-            console.error("❌ Magic login error:", error);
+        } catch (err) {
+            console.error("❌ Magic login error:", err);
             setError("The magic link has expired or is invalid.");
-            setStatus("Unauthorized. Back to login...");
-            setTimeout(() => navigate("/auth"), 3000);
+            setStatus("Unauthorized. Back to home...");
+            setTimeout(() => navigate("/"), 3000);
         }
-    };
+    }, [login, navigate]);
 
-    // Helper to decode JWT payload safely
-    const parseJwt = (token) => {
-        try {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            return JSON.parse(jsonPayload);
-        } catch (e) {
-            return {};
+    useEffect(() => {
+        const token = searchParams.get("token");
+
+        if (token && !hasProcessed.current) {
+            hasProcessed.current = true;
+            handleLogin(token);
+        } else if (!token) {
+            setError("No magic token found in the link.");
+            setStatus("Redirecting to home...");
+            setTimeout(() => navigate("/"), 2500);
         }
-    };
+    }, [searchParams, navigate, handleLogin]);
 
     return (
         <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-slate-50 selection:bg-primary/30 font-sans">

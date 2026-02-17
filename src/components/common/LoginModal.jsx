@@ -1,120 +1,116 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { User } from 'lucide-react';
+import {
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog";
+import {
+    User,
+    Phone,
+    MessageCircle,
+    Key,
+    ArrowLeft,
+} from 'lucide-react';
 import Swal from 'sweetalert2';
-import { registerUser } from '@/api/auth';
 
-export default function LoginModal({ children, open, onOpenChange }) {
-    const navigate = useNavigate();
-    const [mode, setMode] = useState('user'); // 'user' | 'admin' | 'register'
-
+export default function LoginModal({ open, onOpenChange, children }) {
+    const [isRegister, setIsRegister] = useState(false);
 
     // Register State
     const [regName, setRegName] = useState("");
     const [regPhone, setRegPhone] = useState("");
     const [regPassword, setRegPassword] = useState("");
 
-
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        // Validation
         if (!regName.trim()) {
-            return Swal.fire({ icon: 'warning', title: 'Start Adventure', text: 'Please enter your name.' });
+            return Swal.fire({ icon: 'warning', title: 'Nama Diperlukan', text: 'Masukkan nama lengkap kamu.' });
         }
         if (!regPhone.trim() || !/^\d+$/.test(regPhone) || regPhone.length < 10) {
-            return Swal.fire({ icon: 'warning', title: 'Invalid Phone', text: 'Please enter a valid phone number (digits only, min 10 chars).' });
+            return Swal.fire({ icon: 'warning', title: 'Nomor Tidak Valid', text: 'Masukkan nomor HP valid (hanya angka, min 10 digit).' });
         }
         if (!regPassword || regPassword.length < 6) {
-            return Swal.fire({ icon: 'warning', title: 'Weak Password', text: 'Password must be at least 6 characters long.' });
+            return Swal.fire({ icon: 'warning', title: 'Password Lemah', text: 'Password minimal 6 karakter.' });
         }
 
         try {
-            const response = await registerUser({
+            const response = await import("@/api/auth").then(m => m.registerUser({
                 name: regName,
                 phone_number: regPhone,
-                password: regPassword
-            });
+                password: regPassword,
+            }));
 
-            console.log("Register response:", response);
+            console.log("👉 Register Debug Response:", response);
+
+            // Check for logical error in 200 OK response
+            if (response?.status === false || response?.error) {
+                throw new Error(response?.message || "Registration failed (backend logic)");
+            }
 
             Swal.fire({
                 icon: 'success',
-                title: 'Registration Success',
-                text: 'You can now login via WhatsApp.',
+                title: 'Registrasi Berhasil!',
+                text: 'Sekarang kamu bisa login via WhatsApp.',
                 timer: 2000
             });
-            setMode('user');
-            // Reset form
+            setIsRegister(false);
             setRegName("");
             setRegPhone("");
             setRegPassword("");
-            setRegPassword("");
         } catch (error) {
-            console.error("Register error:", error);
+            console.error("Register error", error);
             Swal.fire({
                 icon: 'error',
-                title: 'Registration Failed',
-                text: error.message || error.response?.data?.message || "Please check your inputs and try again."
+                title: 'Registrasi Gagal',
+                text: error?.message || "Cek kembali input kamu dan coba lagi.",
             });
         }
     };
 
-    const resetForm = () => {
-        setMode('user');
-        setRegPassword("");
+    const resetAndClose = (val) => {
+        if (!val) {
+            setIsRegister(false);
+            setRegName("");
+            setRegPhone("");
+            setRegPassword("");
+        }
+        onOpenChange(val);
     };
 
     return (
-        <Dialog open={open} onOpenChange={(isOpen) => {
-            if (!isOpen) resetForm();
-            onOpenChange?.(isOpen);
-        }}>
+        <Dialog open={open} onOpenChange={resetAndClose}>
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] w-[95vw] max-h-[90vh] overflow-y-auto rounded-2xl p-0 gap-0 border-0 shadow-2xl">
-                {/* Header with gradient */}
-                <div className="bg-gradient-to-r from-pink-400 to-purple-600 p-6 rounded-t-2xl">
-                    <DialogHeader className="text-white">
-                        <DialogTitle className="text-2xl font-bold">
-                            {mode === 'register' ? "Create Account" : "Welcome Back"}
+
+            <DialogContent className="sm:max-w-md rounded-[2rem] border-0 shadow-2xl p-0 overflow-hidden">
+                <div className="p-8 space-y-6">
+                    <DialogHeader className="space-y-3">
+                        <DialogTitle className="text-3xl font-black tracking-tight text-slate-900 uppercase font-heading text-center">
+                            {isRegister ? "Daftar Akun" : "Masuk"}
                         </DialogTitle>
-                        <DialogDescription className="text-white/80">
-                            {mode === 'register'
-                                ? "Enter your details below to create your account"
-                                : "Login to access your personalized dashboard"
-                            }
+                        <DialogDescription className="text-slate-400 font-medium text-center">
+                            {isRegister
+                                ? "Buat akun baru untuk mulai menggunakan Kawai-chan."
+                                : "Login ke dashboard melalui WhatsApp."}
                         </DialogDescription>
                     </DialogHeader>
-                </div>
 
-                <div className="p-6 space-y-6">
-
-                    {/* User Login via WhatsApp */}
-                    {mode === 'user' && (
-                        <div className="space-y-6 animate-in fade-in duration-300">
-                            <div className="text-center mb-4">
-                                <h3 className="text-lg font-semibold text-gray-700">Login</h3>
-                                <p className="text-sm text-muted-foreground">Login via WhatsApp Magic Link</p>
-                            </div>
-
-                            {/* Magic Link Button */}
-                            <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 text-center space-y-4">
+                    {/* Login View */}
+                    {!isRegister && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                            <div className="relative group/btn">
+                                <div className="absolute -inset-1 bg-gradient-to-r from-[#25D366] to-[#128C7E] rounded-2xl blur opacity-20 group-hover/btn:opacity-40 transition duration-500" />
                                 <Button
                                     asChild
-                                    className="w-full h-14 text-lg bg-[#25D366] hover:bg-[#128C7E] text-white font-bold rounded-xl shadow-md transition-transform hover:scale-[1.02]"
+                                    className="w-full h-14 text-lg bg-[#25D366] hover:bg-[#128C7E] text-white font-black rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] border-0 relative"
                                 >
                                     <a
                                         href={`https://wa.me/${import.meta.env.VITE_BOT_NUMBER}?text=Dashboard`}
@@ -126,63 +122,94 @@ export default function LoginModal({ children, open, onOpenChange }) {
                                                 e.preventDefault();
                                                 Swal.fire({
                                                     icon: 'error',
-                                                    title: 'Configuration Error',
-                                                    text: 'VITE_BOT_NUMBER is not set in .env file! Please contact administrator.'
+                                                    title: 'Ops!',
+                                                    text: 'Konfigurasi WhatsApp bot belum diatur. Hubungi support.'
                                                 });
                                             }
                                         }}
                                     >
-                                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                                        </svg>
-                                        Login via WhatsApp
+                                        <MessageCircle className="w-6 h-6 fill-white/20" />
+                                        LOGIN VIA WA
                                     </a>
                                 </Button>
-                                <p className="text-xs text-muted-foreground">
-                                    We will send a login link to your WhatsApp number.
-                                </p>
                             </div>
 
-                            <div className="pt-4 border-t border-border/50 flex flex-col gap-2 text-center text-sm">
-                                <p className="text-muted-foreground">
-                                    Don't have an account?{" "}
-                                    <button onClick={() => setMode('register')} className="font-semibold text-primary hover:underline">
-                                        Sign up
-                                    </button>
-                                </p>
+                            <div className="relative flex items-center py-1">
+                                <div className="flex-grow border-t border-slate-100"></div>
+                                <span className="flex-shrink mx-4 text-slate-300 text-xs font-black uppercase tracking-widest">Belum punya akun?</span>
+                                <div className="flex-grow border-t border-slate-100"></div>
                             </div>
+
+                            <Button
+                                variant="outline"
+                                onClick={() => setIsRegister(true)}
+                                className="w-full h-12 rounded-2xl border-slate-100 text-slate-600 font-bold hover:bg-slate-50 hover:text-primary hover:border-primary/20 transition-all border-2"
+                            >
+                                BUAT AKUN BARU
+                            </Button>
                         </div>
                     )}
 
+                    {/* Register View */}
+                    {isRegister && (
+                        <form onSubmit={handleRegister} className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                            <button
+                                type="button"
+                                onClick={() => setIsRegister(false)}
+                                className="flex items-center gap-2 text-sm text-slate-400 hover:text-primary font-semibold transition-colors group"
+                            >
+                                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                                Kembali ke Login
+                            </button>
 
-                    {/* Register Form */}
-                    {mode === 'register' && (
-                        <form onSubmit={handleRegister} className="space-y-4 animate-in fade-in duration-300">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label>Name</Label>
-                                    <Input placeholder="John Doe" value={regName} onChange={e => setRegName(e.target.value)} required />
+                                    <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Nama Lengkap</Label>
+                                    <div className="relative group">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
+                                        <Input
+                                            placeholder="Kawai Dev"
+                                            className="h-12 pl-11 rounded-xl border-slate-100 bg-slate-50 focus:bg-white transition-all shadow-sm"
+                                            value={regName}
+                                            onChange={e => setRegName(e.target.value)}
+                                            required
+                                        />
+                                    </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Phone</Label>
-                                    <Input placeholder="628..." value={regPhone} onChange={e => setRegPhone(e.target.value)} required />
+                                    <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Nomor HP</Label>
+                                    <div className="relative group">
+                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
+                                        <Input
+                                            placeholder="628123..."
+                                            className="h-12 pl-11 rounded-xl border-slate-100 bg-slate-50 focus:bg-white transition-all shadow-sm"
+                                            value={regPhone}
+                                            onChange={e => setRegPhone(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Password</Label>
+                                    <div className="relative group">
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors">
+                                            <Key className="w-4 h-4" />
+                                        </div>
+                                        <Input
+                                            type="password"
+                                            placeholder="••••••••"
+                                            className="h-12 pl-11 rounded-xl border-slate-100 bg-slate-50 focus:bg-white transition-all shadow-sm"
+                                            value={regPassword}
+                                            onChange={e => setRegPassword(e.target.value)}
+                                            required
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label>Password</Label>
-                                <Input type="password" placeholder="Create password" value={regPassword} onChange={e => setRegPassword(e.target.value)} required />
-                            </div>
 
-                            <Button type="submit" className="w-full h-11 text-base bg-gradient-to-r from-pink-400 to-purple-600 hover:from-pink-500 hover:to-purple-700 text-white shadow-md transition-all hover:scale-[1.02]">
-                                Create Account
+                            <Button type="submit" className="w-full h-12 text-lg bg-primary hover:bg-primary/90 text-white font-black rounded-2xl shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                                DAFTAR
                             </Button>
-
-                            <p className="text-center text-sm text-muted-foreground pt-2">
-                                Already have an account?{" "}
-                                <button type="button" onClick={() => setMode('user')} className="font-semibold text-primary hover:underline">
-                                    Login
-                                </button>
-                            </p>
                         </form>
                     )}
                 </div>
@@ -190,3 +217,5 @@ export default function LoginModal({ children, open, onOpenChange }) {
         </Dialog>
     );
 }
+
+
