@@ -13,7 +13,6 @@ export default function RemindersPage() {
     const [search, setSearch] = useState("");
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-    // Load Reminders
     useEffect(() => {
         loadData();
     }, [search]);
@@ -143,9 +142,6 @@ export default function RemindersPage() {
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
-                    {/* Note: The original code didn't have a Plus button here, but the Header UI usually holds it. 
-                        Reminders are usually added via chat/bot in this app context. 
-                        I'll include the search as the primary action. */}
                 </div>
             </div>
 
@@ -214,4 +210,3 @@ export default function RemindersPage() {
         </div>
     );
 }
-

@@ -161,28 +161,18 @@ export default function MagicLinkPage() {
                         <div className="flex justify-center gap-2 pt-2">
                             {[1, 2, 3].map(i => (
                                 <div key={i} className={`h-1.5 rounded-full transition-all duration-500 
-                                    ${stage >= i ? 'bg-primary' : 'bg-slate-100'} 
-                                    ${stage === i ? 'w-8' : 'w-4'}`} />
+                                    ${i <= stage ? 'w-8 bg-primary' : 'w-1.5 bg-slate-200'}`} />
                             ))}
                         </div>
                     )}
 
                     {error && (
-                        <div className="pt-4">
-                            <p className="text-[10px] font-black uppercase text-slate-300 tracking-widest bg-slate-50 py-2 px-4 rounded-full inline-block">
-                                Error logged for developer
-                            </p>
-                        </div>
+                        <p className="text-red-600 text-xs font-medium bg-red-50 p-3 rounded-lg border border-red-100 italic">
+                            {error}
+                        </p>
                     )}
-
-                    {/* Footer Info */}
-                    <div className="pt-4 border-t border-slate-50 flex items-center justify-center gap-2">
-                        <ShieldCheck className="w-3 h-3 text-slate-300" />
-                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Kawai Security</span>
-                    </div>
                 </CardContent>
             </Card>
         </div>
     );
 }
-

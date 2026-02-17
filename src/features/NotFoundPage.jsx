@@ -53,10 +53,9 @@ export default function NotFoundPage() {
                     <div className="w-10 h-10 p-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md">
                         <img src={Logo} alt="Logo" className="w-full h-full object-contain brightness-0 invert opacity-50" />
                     </div>
-                    <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-600">Kawai-chan Intelligent Assistant</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.15em] text-white/30">Kawai-chan © 2025</p>
                 </div>
             </div>
         </div>
     );
 }
-

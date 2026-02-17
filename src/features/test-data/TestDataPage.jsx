@@ -232,4 +232,3 @@ function DiagnosticStep({ number, label, desc }) {
         </div>
     );
 }
-

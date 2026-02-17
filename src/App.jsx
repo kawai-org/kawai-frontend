@@ -1,19 +1,18 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import AuthPage from './pages/AuthPage';
-import LandingPage from './pages/LandingPage';
-import DashboardPage from './pages/DashboardPage';
-import NotesPage from './pages/NotesPage';
-import RemindersPage from './pages/RemindersPage';
-import LinksPage from './pages/LinksPage';
-import CalendarPage from './pages/CalendarPage';
-import FaqPage from './pages/FaqPage';
-import NotFoundPage from './pages/NotFoundPage';
-import TestDataPage from './pages/TestDataPage';
+import AuthPage from './features/auth/AuthPage';
+import LandingPage from './features/landing/LandingPage';
+import DashboardPage from './features/dashboard/DashboardPage';
+import NotesPage from './features/notes/NotesPage';
+import RemindersPage from './features/reminders/RemindersPage';
+import LinksPage from './features/links/LinksPage';
+import CalendarPage from './features/calendar/CalendarPage';
+import FaqPage from './features/faq/FaqPage';
+import NotFoundPage from './features/NotFoundPage';
+import TestDataPage from './features/test-data/TestDataPage';
 import DashboardLayout from './layout/DashboardLayout';
-import PrivateRoute from './components/PrivateRoute';
-import LoadingScreen from './components/LoadingScreen';
-import MagicLinkPage from './pages/MagicLinkPage';
+import LoadingScreen from './components/common/LoadingScreen';
+import MagicLinkPage from './features/auth/MagicLinkPage';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -38,14 +37,12 @@ function App() {
             <Route path="/auth/magic" element={<MagicLinkPage />} />
 
             {/* Protected Dashboard Routes */}
-            <Route element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/notes" element={<NotesPage />} />
-              <Route path="/links" element={<LinksPage />} />
-              <Route path="/reminders" element={<RemindersPage />} />
-              <Route path="/calendar" element={<CalendarPage />} />
-              <Route path="/faq" element={<FaqPage />} />
-            </Route>
+            <Route path="/dashboard" element={<DashboardLayout><DashboardPage /></DashboardLayout>} />
+            <Route path="/notes" element={<DashboardLayout><NotesPage /></DashboardLayout>} />
+            <Route path="/links" element={<DashboardLayout><LinksPage /></DashboardLayout>} />
+            <Route path="/reminders" element={<DashboardLayout><RemindersPage /></DashboardLayout>} />
+            <Route path="/calendar" element={<DashboardLayout><CalendarPage /></DashboardLayout>} />
+            <Route path="/faq" element={<DashboardLayout><FaqPage /></DashboardLayout>} />
 
             {/* 404 Route */}
             <Route path="*" element={<NotFoundPage />} />

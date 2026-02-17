@@ -6,12 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Search, ExternalLink, Copy, Trash2, Globe, Check, Link as LinkIcon } from "lucide-react";
 import { format } from "date-fns";
 import Swal from 'sweetalert2';
-import { Label } from "@/components/ui/label";
 
 export default function LinksPage() {
     const [links, setLinks] = useState([]);
     const [search, setSearch] = useState("");
-
     const [copiedId, setCopiedId] = useState(null);
 
     useEffect(() => {
@@ -27,7 +25,6 @@ export default function LinksPage() {
             setLinks([]);
         }
     };
-
 
     const handleCopy = (id, text) => {
         navigator.clipboard.writeText(text);
@@ -211,8 +208,6 @@ export default function LinksPage() {
                     </table>
                 </div>
             </div>
-
         </div>
     );
 }
-

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
 
-export default function DashboardActivity() {
+export default function ActivityChart() {
     // Mock Activity Data for Chart
     const activityData = [
         { name: 'Mon', count: 4 },
@@ -78,4 +78,3 @@ export default function DashboardActivity() {
         </Card>
     );
 }
-

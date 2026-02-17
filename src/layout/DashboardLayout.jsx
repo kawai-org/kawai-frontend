@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import LoadingScreen from '@/components/common/LoadingScreen';
 import {
     LayoutDashboard,
     FileText,
@@ -26,11 +27,53 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function DashboardLayout() {
+export default function DashboardLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [isChecking, setIsChecking] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    // Auth check - redirect if not logged in
+    useEffect(() => {
+        const checkAuth = () => {
+            try {
+                const userStr = localStorage.getItem("user");
+                if (userStr) {
+                    const parsedUser = JSON.parse(userStr);
+                    if (parsedUser && parsedUser.email) {
+                        setUser(parsedUser);
+                        setIsAuthenticated(true);
+                    } else {
+                        setIsAuthenticated(false);
+                        navigate('/auth', { replace: true });
+                    }
+                } else {
+                    setIsAuthenticated(false);
+                    navigate('/auth', { replace: true });
+                }
+            } catch (error) {
+                console.error("Auth check failed:", error);
+                setIsAuthenticated(false);
+                navigate('/auth', { replace: true });
+            } finally {
+                setIsChecking(false);
+            }
+        };
+
+        checkAuth();
+    }, [navigate]);
+
+    // Show loading while checking auth
+    if (isChecking) {
+        return <LoadingScreen />;
+    }
+
+    // Don't render if not authenticated (already redirecting)
+    if (!isAuthenticated || !user) {
+        return null;
+    }
 
     const handleLogout = () => {
         localStorage.removeItem("user");
@@ -219,7 +262,7 @@ export default function DashboardLayout() {
                 {/* Page Content */}
                 <main className="flex-1 overflow-y-auto bg-slate-50/50 p-6 md:p-10 scroll-smooth">
                     <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                        <Outlet />
+                        {children}
                     </div>
                 </main>
             </div>

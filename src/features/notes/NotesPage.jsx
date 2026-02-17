@@ -24,7 +24,6 @@ export default function NotesPage() {
     const [selectedNote, setSelectedNote] = useState(null);
     const [viewOpen, setViewOpen] = useState(false);
 
-
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
     useEffect(() => {
@@ -41,7 +40,6 @@ export default function NotesPage() {
             }
         }
     };
-
 
     const handleView = async (note) => {
         try {
@@ -192,7 +190,6 @@ export default function NotesPage() {
                 )}
             </div>
 
-
             {/* View Note Dialog */}
             <Dialog open={viewOpen} onOpenChange={setViewOpen}>
                 <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-md border-0 rounded-[2.5rem] shadow-2xl p-0 overflow-hidden outline-none">
@@ -254,4 +251,3 @@ function NoteActionButton({ icon, onClick, color }) {
         </Button>
     );
 }
-

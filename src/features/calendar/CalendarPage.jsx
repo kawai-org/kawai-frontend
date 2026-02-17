@@ -249,4 +249,3 @@ function LegendItem({ color, label }) {
         </div>
     );
 }
-

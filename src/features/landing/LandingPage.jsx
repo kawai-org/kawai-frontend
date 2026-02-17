@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Logo from "@/assets/logo.png";
-import LoginModal from "@/components/LoginModal";
+import LoginModal from "@/components/common/LoginModal";
 import {
     MessageCircle,
     Save,
     Smartphone,
-    Zap,
     Send,
     Shield,
     Star,
@@ -167,7 +166,7 @@ export default function LandingPage() {
 
                             <Card className="md:col-span-4 p-8 bg-white border-0 shadow-xl shadow-slate-200/50 rounded-3xl group transition-all hover:-translate-y-2">
                                 <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 mb-6 border border-purple-200">
-                                    <Zap size={32} />
+                                    ⚡
                                 </div>
                                 <h3 className="text-xl font-bold mb-3">Lightning Fast</h3>
                                 <p className="text-slate-500">Cloud-synced and available across all your platforms instantly through the dashboard.</p>
@@ -196,7 +195,7 @@ export default function LandingPage() {
                             />
                             <Step
                                 num="02"
-                                icon={<Zap size={32} />}
+                                icon={<Shield size={32} />}
                                 title="Auto-Organize"
                                 desc="Our AI categorizes your data instantly and saves it to your cloud."
                             />
@@ -378,33 +377,35 @@ function Testimonial({ quote, name, role, featured = false }) {
                     {name.charAt(0)}
                 </div>
                 <div>
-                    <p className="font-black uppercase tracking-tight text-sm leading-none">{name}</p>
-                    <p className={`text-xs mt-1 ${featured ? 'text-white/60' : 'text-slate-400'}`}>{role}</p>
+                    <p className="font-bold text-sm">{name}</p>
+                    <p className={`text-xs ${featured ? 'text-white/60' : 'text-slate-500'}`}>{role}</p>
                 </div>
             </div>
         </Card>
     );
 }
 
-function FooterColumn({ title, links }) {
+function SocialIcon() {
     return (
-        <div className="space-y-6">
-            <h4 className="font-black uppercase tracking-widest text-xs text-slate-900">{title}</h4>
-            <ul className="space-y-4">
-                {links.map((link, idx) => (
-                    <li key={idx}>
-                        <a href="#" className="text-slate-500 hover:text-primary transition-colors text-sm font-medium">{link}</a>
-                    </li>
-                ))}
-            </ul>
+        <div className="w-10 h-10 rounded-full bg-slate-100 hover:bg-primary hover:text-white transition-all cursor-pointer flex items-center justify-center text-slate-600">
+            <span className="text-lg">→</span>
         </div>
     );
 }
 
-function SocialIcon() {
+function FooterColumn({ title, links }) {
     return (
-        <a href="#" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all duration-300 border border-slate-100">
-            <Send size={18} />
-        </a>
+        <div className="space-y-4">
+            <p className="font-bold text-slate-900 text-sm">{title}</p>
+            <ul className="space-y-2">
+                {links.map((link, i) => (
+                    <li key={i}>
+                        <a href="#" className="text-slate-500 hover:text-primary transition-colors text-sm font-medium">
+                            {link}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
 }

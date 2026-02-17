@@ -3,14 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, ChevronRight, Clock } from "lucide-react";
 import { getNotes } from "@/api/notes";
 
-export default function DashboardRecentNotes() {
+export default function RecentNotes() {
     const [recentNotes, setRecentNotes] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadRecent = async () => {
             try {
-                // Fetch notes with empty search to get all
                 const notesData = await getNotes();
                 const notes = Array.isArray(notesData) ? notesData : [];
                 setRecentNotes(notes.slice(0, 5));
@@ -99,4 +98,3 @@ export default function DashboardRecentNotes() {
         </Card>
     );
 }
-

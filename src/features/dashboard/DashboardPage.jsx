@@ -1,7 +1,10 @@
+import { Star, Target, MessageSquare } from "lucide-react";
+import StatsCard from "./components/StatsCard";
+import ActivityChart from "./components/ActivityChart";
+import RecentNotes from "./components/RecentNotes";
+
 export default function DashboardPage() {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-    // Admin Dashboard Removed - Always render User Dashboard behavior
 
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
@@ -12,7 +15,7 @@ export default function DashboardPage() {
                 <div className="relative bg-slate-900 rounded-[2.2rem] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/5">
                     <div className="space-y-5 text-center md:text-left z-10">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
-                            <Zap size={12} className="fill-primary" /> System Online
+                            ⚡ System Online
                         </div>
                         <div className="space-y-2">
                             <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase font-heading">
@@ -42,18 +45,18 @@ export default function DashboardPage() {
             </div>
 
             {/* Stat Cards */}
-            <DashboardStats />
+            <StatsCard />
 
             {/* Charts & Lists Section */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Activity Chart */}
                 <div className="lg:col-span-8">
-                    <DashboardActivity />
+                    <ActivityChart />
                 </div>
 
                 {/* Recent Items */}
                 <div className="lg:col-span-4">
-                    <DashboardRecentNotes />
+                    <RecentNotes />
                 </div>
             </div>
         </div>
@@ -67,4 +70,3 @@ function BannerBadge({ icon, text }) {
         </div>
     );
 }
-

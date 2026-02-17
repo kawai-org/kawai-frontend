@@ -4,7 +4,7 @@ import { FileText, Link as LinkIcon, Calendar, TrendingUp, ArrowUpRight } from "
 import { getNotes } from "@/api/notes";
 import { getReminders } from "@/api/reminders";
 
-export default function DashboardStats() {
+export default function StatsCard() {
     const [stats, setStats] = useState({
         notesCount: 0,
         linksCount: 0,
@@ -47,28 +47,28 @@ export default function DashboardStats() {
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard
+            <StatCardItem
                 title="Total Notes"
                 value={loading ? "..." : stats.notesCount}
                 icon={<FileText size={22} />}
                 color="blue"
                 trend="+12%"
             />
-            <StatCard
+            <StatCardItem
                 title="Saved Links"
                 value={loading ? "..." : stats.linksCount}
                 icon={<LinkIcon size={22} />}
                 color="green"
                 trend="+5%"
             />
-            <StatCard
+            <StatCardItem
                 title="Reminders"
                 value={loading ? "..." : stats.remindersCount}
                 icon={<Calendar size={22} />}
                 color="amber"
                 trend="Ongoing"
             />
-            <StatCard
+            <StatCardItem
                 title="Activity"
                 value="98%"
                 icon={<TrendingUp size={22} />}
@@ -79,7 +79,7 @@ export default function DashboardStats() {
     );
 }
 
-function StatCard({ title, value, icon, color, trend }) {
+function StatCardItem({ title, value, icon, color, trend }) {
     const colors = {
         blue: "bg-blue-500/10 text-blue-600 border-blue-500/10",
         green: "bg-green-500/10 text-green-600 border-green-500/10",
@@ -110,4 +110,3 @@ function StatCard({ title, value, icon, color, trend }) {
         </Card>
     );
 }
-

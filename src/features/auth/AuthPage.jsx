@@ -13,8 +13,7 @@ import {
     ArrowLeft,
     CheckCircle2,
     MessageCircle,
-    ShieldCheck,
-    Zap
+    ShieldCheck
 } from 'lucide-react';
 
 export default function AuthPage() {
@@ -178,7 +177,7 @@ export default function AuthPage() {
 
                                         <div className="grid grid-cols-1 gap-4">
                                             <InfoCard
-                                                icon={<Zap className="w-4 h-4 text-amber-500" />}
+                                                icon={<Key className="w-4 h-4 text-amber-500" />}
                                                 text="Magic Link validation"
                                             />
                                             <InfoCard
@@ -268,13 +267,6 @@ export default function AuthPage() {
                             )}
                         </CardContent>
                     </Card>
-
-                    {/* Footer Info */}
-                    <div className="flex justify-center items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 pt-4">
-                        <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" /> GDPR Ready</span>
-                        <div className="w-1 h-1 bg-slate-200 rounded-full" />
-                        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3" /> SLA 99.9%</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -283,12 +275,13 @@ export default function AuthPage() {
 
 function InfoCard({ icon, text }) {
     return (
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 group">
-            <div className="bg-white p-1.5 rounded-lg shadow-sm border border-slate-50 group-hover:scale-110 transition-transform">
-                {icon}
+        <div className="group cursor-pointer relative rounded-2xl border border-slate-100 bg-white p-5 transition-all hover:shadow-lg hover:border-primary/30 hover:-translate-y-1">
+            <div className="flex items-center gap-4">
+                <div className="shrink-0 w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                    {icon}
+                </div>
+                <p className="font-bold text-slate-700 text-sm group-hover:text-primary transition-colors">{text}</p>
             </div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-tight">{text}</p>
         </div>
-    )
+    );
 }
-
