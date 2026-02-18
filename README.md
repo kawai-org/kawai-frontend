@@ -286,4 +286,4 @@ vercel
 
 ---
 
-Dibuat dengan ❤️ menggunakan React + Vite + Bun
+Dibuat menggunakan React + Vite + Bun
