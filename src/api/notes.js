@@ -89,7 +89,7 @@ export const getNoteDetail = async (id) => {
             throw new Error('Invalid note ID');
         }
 
-        const response = await client.get(`/api/notes/detail/${id}`);
+        const response = await client.get(`/api/dashboard/notes/${id}/detail`);
 
         // Check for backend error response
         checkResponseError(response);
