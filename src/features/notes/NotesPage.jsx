@@ -45,10 +45,16 @@ export default function NotesPage() {
         try {
             setViewOpen(true);
             setSelectedNote(note);
-            const detail = await getNoteDetail(note._id);
+            const detail = await getNoteDetail(note.id);
             setSelectedNote(detail);
         } catch (error) {
             console.error("Failed to fetch detail", error);
+            Swal.fire({
+                title: 'Error',
+                text: error.message || 'Failed to fetch note details.',
+                icon: 'error',
+                customClass: { popup: 'rounded-[1.5rem]' }
+            });
         }
     };
 
@@ -68,11 +74,16 @@ export default function NotesPage() {
                 confirmButton: 'rounded-xl px-6 py-2',
                 cancelButton: 'rounded-xl px-6 py-2'
             },
-            preConfirm: (newContent) => {
-                return updateNote(note._id, newContent);
+            preConfirm: async (newContent) => {
+                try {
+                    return await updateNote(note.id, newContent);
+                } catch (error) {
+                    Swal.showValidationMessage(error.message || 'Failed to update note');
+                    return false;
+                }
             }
         }).then((result) => {
-            if (result.isConfirmed) {
+            if (result.isConfirmed && result.value) {
                 Swal.fire({
                     title: 'Success',
                     text: 'Your note has been refined successfully.',
@@ -107,10 +118,10 @@ export default function NotesPage() {
                         customClass: { popup: 'rounded-[1.5rem]' }
                     });
                     loadNotes();
-                }).catch(() => {
+                }).catch((err) => {
                     Swal.fire({
                         title: 'Error',
-                        text: 'Failed to delete note.',
+                        text: err.message || 'Failed to delete note.',
                         icon: 'error',
                         customClass: { popup: 'rounded-[1.5rem]' }
                     });
@@ -172,7 +183,7 @@ export default function NotesPage() {
                         <div className="p-7 pt-4 flex gap-2">
                             <NoteActionButton icon={<Eye size={16} />} onClick={() => handleView(note)} color="blue" />
                             <NoteActionButton icon={<Edit2 size={16} />} onClick={() => handleEdit(note)} color="slate" />
-                            <NoteActionButton icon={<Trash2 size={16} />} onClick={() => handleDelete(note._id)} color="red" />
+                            <NoteActionButton icon={<Trash2 size={16} />} onClick={() => handleDelete(note.id)} color="red" />
                         </div>
                     </Card>
                 ))}

@@ -1,5 +1,17 @@
 import client from './client';
 
+// Helper to normalize ID from various formats
+const normalizeId = (item) => {
+    return item._id || item.id || item.note_id || null;
+};
+
+// Helper to check if response indicates error
+const checkResponseError = (response) => {
+    if (response.data && response.data.status === 'error') {
+        throw new Error(response.data.msg || 'Operation failed');
+    }
+};
+
 export const getNotes = async (search = "") => {
     try {
         const url = `/api/dashboard/notes${search ? `?search=${search}` : ''}`;
@@ -18,6 +30,12 @@ export const getNotes = async (search = "") => {
             notes = [];
         }
 
+        // Normalize ID field for each note
+        notes = notes.map(note => ({
+            ...note,
+            id: normalizeId(note)
+        }));
+
         return notes;
     } catch (error) {
         console.error("Fetch notes error:", error.message);
@@ -28,7 +46,16 @@ export const getNotes = async (search = "") => {
 
 export const updateNote = async (id, content) => {
     try {
+        // Ensure id is valid
+        if (!id || id === 'undefined' || id === 'null') {
+            throw new Error('Invalid note ID');
+        }
+
         const response = await client.put(`/api/notes/${id}`, { content });
+
+        // Check for backend error response
+        checkResponseError(response);
+
         return response.data;
     } catch (error) {
         console.error("Error updating note:", error);
@@ -38,7 +65,16 @@ export const updateNote = async (id, content) => {
 
 export const deleteNote = async (id) => {
     try {
+        // Ensure id is valid
+        if (!id || id === 'undefined' || id === 'null') {
+            throw new Error('Invalid note ID');
+        }
+
         const response = await client.delete(`/api/notes/${id}`);
+
+        // Check for backend error response
+        checkResponseError(response);
+
         return response.data;
     } catch (error) {
         console.error("Error deleting note:", error);
@@ -48,7 +84,16 @@ export const deleteNote = async (id) => {
 
 export const getNoteDetail = async (id) => {
     try {
+        // Ensure id is valid
+        if (!id || id === 'undefined' || id === 'null') {
+            throw new Error('Invalid note ID');
+        }
+
         const response = await client.get(`/api/notes/detail/${id}`);
+
+        // Check for backend error response
+        checkResponseError(response);
+
         return response.data;
     } catch (error) {
         console.error("Error fetching note detail:", error);

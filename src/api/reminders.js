@@ -1,5 +1,17 @@
 import client from './client';
 
+// Helper to normalize ID from various formats
+const normalizeId = (item) => {
+    return item._id || item.id || item.reminder_id || null;
+};
+
+// Helper to check if response indicates error
+const checkResponseError = (response) => {
+    if (response.data && response.data.status === 'error') {
+        throw new Error(response.data.msg || 'Operation failed');
+    }
+};
+
 export const getReminders = async (search = "") => {
     try {
         const url = `/api/dashboard/reminders${search ? `?search=${search}` : ''}`;
@@ -18,6 +30,12 @@ export const getReminders = async (search = "") => {
             reminders = [];
         }
 
+        // Normalize ID field for each reminder
+        reminders = reminders.map(reminder => ({
+            ...reminder,
+            id: normalizeId(reminder)
+        }));
+
         return reminders;
     } catch (error) {
         console.error("Fetch reminders error:", error.message);
@@ -27,7 +45,16 @@ export const getReminders = async (search = "") => {
 
 export const updateReminder = async (id, data) => {
     try {
+        // Ensure id is valid
+        if (!id || id === 'undefined' || id === 'null') {
+            throw new Error('Invalid reminder ID');
+        }
+
         const response = await client.put(`/api/reminders/${id}`, data);
+
+        // Check for backend error response
+        checkResponseError(response);
+
         return response.data;
     } catch (error) {
         console.error("Error updating reminder:", error);
@@ -37,7 +64,16 @@ export const updateReminder = async (id, data) => {
 
 export const deleteReminder = async (id) => {
     try {
+        // Ensure id is valid
+        if (!id || id === 'undefined' || id === 'null') {
+            throw new Error('Invalid reminder ID');
+        }
+
         const response = await client.delete(`/api/reminders/${id}`);
+
+        // Check for backend error response
+        checkResponseError(response);
+
         return response.data;
     } catch (error) {
         console.error("Error deleting reminder:", error);

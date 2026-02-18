@@ -60,7 +60,7 @@ export default function RemindersPage() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await updateReminder(reminder._id, result.value);
+                    await updateReminder(reminder.id, result.value);
                     Swal.fire({
                         title: 'Synchronized',
                         text: 'Your schedule has been updated across the cloud.',
@@ -71,7 +71,7 @@ export default function RemindersPage() {
                 } catch (err) {
                     Swal.fire({
                         title: 'Error',
-                        text: 'Failed to synchronize updates.',
+                        text: err.message || 'Failed to synchronize updates.',
                         icon: 'error',
                         customClass: { popup: 'rounded-[1.5rem]' }
                     });
@@ -103,10 +103,10 @@ export default function RemindersPage() {
                         customClass: { popup: 'rounded-[1.5rem]' }
                     });
                     loadData();
-                }).catch(() => {
+                }).catch((err) => {
                     Swal.fire({
                         title: 'Error',
-                        text: 'Failed to remove reminder.',
+                        text: err.message || 'Failed to remove reminder.',
                         icon: 'error',
                         customClass: { popup: 'rounded-[1.5rem]' }
                     });
@@ -187,7 +187,7 @@ export default function RemindersPage() {
                                 variant="ghost"
                                 size="icon"
                                 className="h-11 w-11 rounded-2xl text-red-500 hover:bg-red-50 transition-all"
-                                onClick={() => handleDelete(reminder._id)}
+                                onClick={() => handleDelete(reminder.id)}
                             >
                                 <Trash2 size={18} />
                             </Button>

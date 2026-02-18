@@ -79,7 +79,7 @@ export default function LinksPage() {
             } catch (error) {
                 Swal.fire({
                     title: 'Error',
-                    text: 'Failed to delete link.',
+                    text: error.message || 'Failed to delete link.',
                     icon: 'error',
                     customClass: { popup: 'rounded-[1.5rem]' }
                 });
