@@ -6,8 +6,7 @@ import DashboardPage from './features/dashboard/DashboardPage';
 import NotesPage from './features/notes/NotesPage';
 import RemindersPage from './features/reminders/RemindersPage';
 import LinksPage from './features/links/LinksPage';
-import CalendarPage from './features/calendar/CalendarPage';
-import FaqPage from './features/faq/FaqPage';
+
 import NotFoundPage from './features/NotFoundPage';
 import DashboardLayout from './layout/DashboardLayout';
 import MagicLinkPage from './features/auth/MagicLinkPage';
@@ -62,26 +61,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/calendar"
-            element={
-              <ProtectedRoute>
-                <DashboardLayout>
-                  <CalendarPage />
-                </DashboardLayout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/faq"
-            element={
-              <ProtectedRoute>
-                <DashboardLayout>
-                  <FaqPage />
-                </DashboardLayout>
-              </ProtectedRoute>
-            }
-          />
+
 
           {/* 404 Route */}
           <Route path="*" element={<NotFoundPage />} />

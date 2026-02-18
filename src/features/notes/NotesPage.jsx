@@ -1,28 +1,16 @@
 import { useEffect, useState } from "react";
-import { getNotes, updateNote, deleteNote, getNoteDetail } from "@/api/notes";
+import { getNotes, updateNote, deleteNote } from "@/api/notes";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, Edit2, Trash2, Calendar, Eye, Clock, FileText, X } from "lucide-react";
+import { Search, Edit2, Trash2, Clock, FileText } from "lucide-react";
 import { format } from "date-fns";
 import Swal from 'sweetalert2';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 
 export default function NotesPage() {
     const [notes, setNotes] = useState([]);
     const [search, setSearch] = useState("");
-    const [selectedNote, setSelectedNote] = useState(null);
-    const [viewOpen, setViewOpen] = useState(false);
 
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -38,23 +26,6 @@ export default function NotesPage() {
             } catch (error) {
                 console.error("Failed to load notes", error);
             }
-        }
-    };
-
-    const handleView = async (note) => {
-        try {
-            setViewOpen(true);
-            setSelectedNote(note);
-            const detail = await getNoteDetail(note.id);
-            setSelectedNote(detail);
-        } catch (error) {
-            console.error("Failed to fetch detail", error);
-            Swal.fire({
-                title: 'Error',
-                text: error.message || 'Failed to fetch note details.',
-                icon: 'error',
-                customClass: { popup: 'rounded-[1.5rem]' }
-            });
         }
     };
 
@@ -181,7 +152,6 @@ export default function NotesPage() {
                             </p>
                         </CardContent>
                         <div className="p-7 pt-4 flex gap-2">
-                            <NoteActionButton icon={<Eye size={16} />} onClick={() => handleView(note)} color="blue" />
                             <NoteActionButton icon={<Edit2 size={16} />} onClick={() => handleEdit(note)} color="slate" />
                             <NoteActionButton icon={<Trash2 size={16} />} onClick={() => handleDelete(note.id)} color="red" />
                         </div>
@@ -201,46 +171,7 @@ export default function NotesPage() {
                 )}
             </div>
 
-            {/* View Note Dialog */}
-            <Dialog open={viewOpen} onOpenChange={setViewOpen}>
-                <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-md border-0 rounded-[2.5rem] shadow-2xl p-0 overflow-hidden outline-none">
-                    <DialogHeader className="p-8 pb-4">
-                        <div className="flex justify-between items-start">
-                            <div className="space-y-1">
-                                <DialogTitle className="text-2xl font-black uppercase tracking-tight font-heading">Note Details</DialogTitle>
-                                <DialogDescription className="text-slate-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                                    <Clock size={12} /> {selectedNote?.created_at ? format(new Date(selectedNote.created_at), 'PPP pp') : 'Private Record'}
-                                </DialogDescription>
-                            </div>
-                            <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 bg-slate-100/50" onClick={() => setViewOpen(false)}>
-                                <X size={18} />
-                            </Button>
-                        </div>
-                    </DialogHeader>
-
-                    <div className="p-8 pt-0 space-y-8">
-                        <div className="bg-slate-50/50 p-7 rounded-[2rem] border border-slate-100 whitespace-pre-wrap leading-relaxed font-bold text-slate-700">
-                            {selectedNote?.content}
-                        </div>
-
-                        {selectedNote?.related_tags && selectedNote.related_tags.length > 0 && (
-                            <div className="space-y-3">
-                                <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
-                                    Smart Classifications
-                                </h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {selectedNote.related_tags.map((tag, i) => (
-                                        <Badge key={i} className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest">
-                                            #{tag.name || tag}
-                                        </Badge>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </DialogContent>
-            </Dialog>
-        </div >
+        </div>
     );
 }
 

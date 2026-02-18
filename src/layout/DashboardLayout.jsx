@@ -5,12 +5,10 @@ import {
     LayoutDashboard,
     FileText,
     Link as LinkIcon,
-    Calendar as CalendarIcon,
     LogOut,
     Menu,
     X,
     Bell,
-    HelpCircle,
     ChevronRight,
     CircleDot,
     UserCheck
@@ -43,7 +41,6 @@ export default function DashboardLayout({ children }) {
         { path: "/notes", label: "My Notes", icon: <FileText size={20} /> },
         { path: "/links", label: "Saved Links", icon: <LinkIcon size={20} /> },
         { path: "/reminders", label: "Reminders", icon: <Bell size={20} /> },
-        { path: "/calendar", label: "Calendar", icon: <CalendarIcon size={20} /> },
     ];
 
     // Get user initials for avatar fallback
@@ -121,22 +118,6 @@ export default function DashboardLayout({ children }) {
 
                 {/* Bottom section */}
                 <div className="flex-shrink-0 w-full px-4 border-t border-slate-50 pt-6 pb-6 bg-white space-y-2">
-                    <NavLink
-                        to="/faq"
-                        onClick={() => setSidebarOpen(false)}
-                        className={({ isActive }) => `
-                            flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-300 group
-                            ${isActive ? 'bg-primary/5 text-primary border border-primary/10' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}
-                        `}
-                    >
-                        {({ isActive }) => (
-                            <>
-                                <HelpCircle size={20} className={`${isActive ? 'text-primary' : 'text-slate-400 group-hover:text-primary'}`} />
-                                <span className="font-bold text-sm tracking-tight uppercase">Support Center</span>
-                            </>
-                        )}
-                    </NavLink>
-
                     <button
                         onClick={handleLogout}
                         className="flex w-full items-center gap-3.5 px-4 py-3.5 rounded-2xl text-red-500 hover:bg-red-50 transition-all duration-300 group font-bold text-sm tracking-tight uppercase"
@@ -164,7 +145,7 @@ export default function DashboardLayout({ children }) {
                         </Button>
                         <div className="hidden md:flex flex-col">
                             <h2 className="font-black text-xl tracking-tighter text-slate-900 uppercase font-heading">
-                                {navItems.find(i => i.path === location.pathname)?.label || (location.pathname === "/faq" ? "Support" : "Kawai-chan")}
+                                {navItems.find(i => i.path === location.pathname)?.label || "Kawai-chan"}
                             </h2>
                             <div className="flex items-center gap-2">
                                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
@@ -177,9 +158,6 @@ export default function DashboardLayout({ children }) {
                         <div className="hidden sm:flex items-center gap-1 bg-slate-100/50 p-1.5 rounded-2xl border border-slate-100">
                             <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-500 hover:text-primary hover:bg-white rounded-xl shadow-none transition-all">
                                 <Bell size={18} />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-500 hover:text-primary hover:bg-white rounded-xl shadow-none transition-all">
-                                <CalendarIcon size={18} />
                             </Button>
                         </div>
 
